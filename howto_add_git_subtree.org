@@ -14,6 +14,9 @@
        - $ cd generic_quantitative_features_EEG/
        - $ git init ./
        - $ git remote add origin ../misc/git_remote_repos/gen_quant_feats_EEG/
+     + don't forget: when add changes and commit to generic_quantitative_features_EEG/,
+       need to push:
+       - $ git push origin master 
 
   3) assuming 'mainproject' is main directory (with git repo):
      - mainproject/ $ git remote add quant_features ../misc/git_remote_repos/gen_quant_feats_EEG/
