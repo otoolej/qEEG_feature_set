@@ -8,21 +8,23 @@ Fs_new=64; % assuming that (Fs/Fs_new) is an integer
 %---------------------------------------------------------------------
 % DIRECTORIES
 %---------------------------------------------------------------------
-EEG_DATA_DIR='';
-EEG_DATA_DIR='~/eeg_data/Rhodri_twin_study/';
-EEG_DATA_DIR_MATFILES='';
-EEG_DATA_DIR_MATFILES='~/eeg_data/Rhodri_twin_study/downsampled_matfiles/';
+
+% NOT USING THESE HERE:
+% $$$ EEG_DATA_DIR='';
+% $$$ EEG_DATA_DIR='~/eeg_data/Rhodri_twin_study/';
+% $$$ EEG_DATA_DIR_MATFILES='';
+% $$$ EEG_DATA_DIR_MATFILES='~/eeg_data/Rhodri_twin_study/downsampled_matfiles/';
 
 
 %---------------------------------------------------------------------
 % MONTAGE
 %---------------------------------------------------------------------
 % bipolar montage for NICU babies:
-BI_MONT={{'F4','C4'},{'F3','C3'},{'C4','T4'},{'C3','T3'},{'C4','Cz'},{'Cz','C3'}, ...
-         {'C4','O2'},{'C3','O1'}};
+% $$$ BI_MONT={{'F4','C4'},{'F3','C3'},{'C4','T4'},{'C3','T3'},{'C4','Cz'},{'Cz','C3'}, ...
+% $$$          {'C4','O2'},{'C3','O1'}};
 
 % or 
-% $$$ BI_MONT={{'F4','C4'},{'F3','C3'}};
+BI_MONT={{'F4','C4'},{'F3','C3'}};
 
 
 %---------------------------------------------------------------------
@@ -46,7 +48,17 @@ ART_ELEC_CHECK=1;   % minimum length required for electrode check (in seconds)
 % FEATURES
 %---------------------------------------------------------------------
 % list of all features:
-all_features_list;
+% $$$ all_features_list;
+
+FEATURE_SET_ALL={ ...
+    'relative_spectral_power' ...
+    ,'spectral_entropy' ...
+    ,'spectral_edge_frequency' ...
+    ,'amplitude_total_power' ...
+    ,'connectivity_BSI' ...
+    ,'connectivity_corr' ...    
+                };
+
 
 % band-pass filter in this band:
 FREQ_BANDS=[0.5 4; 4 7; 7 13; 13 30]; 
@@ -65,10 +77,11 @@ feat_params_st.spec.method='PSD';
 % length of time-domain analysis window and overlap:
 % (applies to 'spectral_power','relative_spectral_power',
 %  'spectral_flatness', and 'spectral_diff' features)
-feat_params_st.spec.L_window=20; % in seconds
+feat_params_st.spec.L_window=8; % in seconds
 feat_params_st.spec.window_type='hamm'; % type of window
 feat_params_st.spec.overlap=75; % overlap in percentage
-feat_params_st.spec.freq_bands=FREQ_BANDS;
+feat_params_st.spec.freq_bands=FREQ_BANDS(1,:);
+feat_params_st.spec.total_freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
 feat_params_st.spec.SEF=0.9;  % spectral edge frequency
 
 % for amplitude features:

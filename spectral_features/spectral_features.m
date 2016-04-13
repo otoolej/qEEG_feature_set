@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-04-13 04:06:08 (otoolej)>
+% last update: Time-stamp: <2016-04-13 05:06:39 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -35,6 +35,7 @@ if(isempty(params_st))
 end
 
 freq_bands=params_st.freq_bands;
+total_freq_bands=params_st.total_freq_bands;
 
 switch feat_name
   case {'spectral_power','relative_spectral_power'}
@@ -46,7 +47,7 @@ switch feat_name
         % Welch's PSD estimate
         %---------------------------------------------------------------------
         [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
-                                                   params_st.overlap, freq_bands,Fs);
+                                                   params_st.overlap,freq_bands,total_freq_bands,Fs);
         
         if(DBplot)
             figure(1); clf; hold all;
@@ -59,11 +60,10 @@ switch feat_name
             pxx_total=1;
         end
         
-        
-        spec_pow=NaN(1,length(freq_bands));
+        spec_pow=NaN(1,size(freq_bands,1));
         N=length(pxx);
         
-        for p=1:length(freq_bands)
+        for p=1:size(freq_bands,1)
             
             ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
             ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
@@ -88,14 +88,14 @@ switch feat_name
         [N_epochs,M]=size(S_stft);
 
         if(strcmp(feat_name,'relative_spectral_power'))
-            itotal_bandpass=ceil(freq_bands(1,1)*f_scale):floor(freq_bands(end,2)*f_scale);
+            itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
             itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>M)=M;  
         end
         
         
-        spec_pow=NaN(N_epochs,length(freq_bands));
+        spec_pow=NaN(N_epochs,size(freq_bands,1));
         
-        for p=1:length(freq_bands)
+        for p=1:size(freq_bands,1)
             ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
             ibandpass(ibandpass<1)=1; ibandpass(ibandpass>M)=M;    
             
@@ -124,7 +124,7 @@ switch feat_name
     % spectral flatness (Wiener entropy)
     %---------------------------------------------------------------------
     [pxx,itotal_bandpass]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
-                                    params_st.overlap, freq_bands,Fs);
+                                    params_st.overlap, freq_bands,total_freq_bands,Fs);
     pxx=pxx(itotal_bandpass);
     
     N=length(pxx);
@@ -140,7 +140,7 @@ switch feat_name
     % spectral entropy (= Shannon entropy on normalised PSD)
     %---------------------------------------------------------------------
     [pxx,itotal_bandpass]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
-                                    params_st.overlap, freq_bands,Fs);
+                                    params_st.overlap, freq_bands,total_freq_bands,Fs);
     pxx=pxx(itotal_bandpass);
 
     p=pxx./sum(pxx);
@@ -160,7 +160,7 @@ switch feat_name
     
     [N_epochs,M]=size(S_stft);
         
-    itotal_bandpass=ceil(freq_bands(1,1)*f_scale):floor(freq_bands(end,2)*f_scale);
+    itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
     itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>M)=M;    
 
     % normalize to whole spectrogram:
@@ -187,7 +187,7 @@ switch feat_name
     %---------------------------------------------------------------------
     
     [pxx,itotal_bandpass,~,fp]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
-                                    params_st.overlap, freq_bands,Fs);
+                                    params_st.overlap, freq_bands, total_freq_bands,Fs);
     
     % only within this frequency band:
     pxx(setdiff(1:length(pxx),itotal_bandpass))=0;
@@ -210,7 +210,8 @@ end
 
 
 
-function [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,L_window,window_type,overlap,freq_bands,Fs)
+function [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,L_window,window_type,overlap, ...
+                                                  freq_bands,total_freq_bands,Fs)
 %---------------------------------------------------------------------
 % generate PSD using the Welch method
 %---------------------------------------------------------------------
@@ -225,7 +226,7 @@ overlap=ceil(win_length*(1-overlap/100));
 N=length(pxx);
 Nfreq=(N-1)*2;
 f_scale=(Nfreq/Fs);
-itotal_bandpass=ceil(freq_bands(1,1)*f_scale):floor(freq_bands(end,2)*f_scale);
+itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
 itotal_bandpass(itotal_bandpass<1)=1;  itotal_bandpass(itotal_bandpass>N)=N;    
 
 
