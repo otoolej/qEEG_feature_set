@@ -3,9 +3,7 @@
 # started: 01-Apr-2016
 
 * instructions
-  1) more details at:
-     - https://medium.com/@porteneuve/mastering-git-subtrees-943d29a798ec#.dcl5t8noa
-  2) initialise repository and link to remote repo. (which is actually local)
+  1) initialise repository and link to remote repo. (which is actually local)
      + in ~/ucc/software/ dir:
        - $ mkdir misc/git_remote_repos/gen_quant_feats_EEG
        - $ cd misc/git_remote_repos/gen_quant_feats_EEG
@@ -18,12 +16,17 @@
        need to push:
        - $ git push origin master 
 
-  3) assuming 'mainproject' is main directory (with git repo):
+  2) assuming 'mainproject' is main directory (with git repo):
      - mainproject/ $ git remote add quant_features ../misc/git_remote_repos/gen_quant_feats_EEG/
      - mainproject/ $ git subtree add --prefix=quant_features_EEG quant_features master
 
-  4) if 'subproject' updates and want to pull in new features:
-     - mainproject/ $ git subtree pull --prefix=quant_features_subtree quant_features master
+  3) if 'gen_quant_feats_EEG/' updates and want to pull in new features (recall need to
+     push the changes from local to remote repo; see above):
+     - mainproject/ $ git subtree pull --prefix=quant_features_EEG quant_features master
 
-  5) 
+  4) to push changes made in mainproject/quant_features_EEG up, then (after commit)
+     - mainproject/ $  git subtree push --prefix=quant_features_EEG quant_features master
       
+
+  ( more details at:
+  https://medium.com/@porteneuve/mastering-git-subtrees-943d29a798ec#.dcl5t8noa )
