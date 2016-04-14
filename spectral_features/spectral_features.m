@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-04-13 05:06:39 (otoolej)>
+% last update: Time-stamp: <2016-04-14 18:16:02 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -62,11 +62,12 @@ switch feat_name
         
         spec_pow=NaN(1,size(freq_bands,1));
         N=length(pxx);
-        
+
         for p=1:size(freq_bands,1)
-            
             ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
+            ibandpass=ibandpass+1;
             ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
+            
             
             spec_pow(p)=sum( pxx(ibandpass) )/pxx_total;
             
@@ -89,15 +90,17 @@ switch feat_name
 
         if(strcmp(feat_name,'relative_spectral_power'))
             itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
+            itotal_bandpass=itotal_bandpass+1;
             itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>M)=M;  
         end
-        
         
         spec_pow=NaN(N_epochs,size(freq_bands,1));
         
         for p=1:size(freq_bands,1)
             ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
+            ibandpass=ibandpass+1;
             ibandpass(ibandpass<1)=1; ibandpass(ibandpass>M)=M;    
+
             
             for k=1:N_epochs
                 pxx=S_stft(k,:);
@@ -161,6 +164,7 @@ switch feat_name
     [N_epochs,M]=size(S_stft);
         
     itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
+    itotal_bandpass=itotal_bandpass+1;
     itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>M)=M;    
 
     % normalize to whole spectrogram:
@@ -201,7 +205,6 @@ switch feat_name
     % spectral edge frequency corresponds to the frequency at (nearest to)
     % the point on the freq axis where pyy_cum = 0.05
     [vv, idx]=min(abs(pxx_cum-params_st.SEF));
-% $$$     dispVars(vv,fp(idx));
     featx=fp(idx);
 
     
@@ -224,9 +227,10 @@ overlap=ceil(win_length*(1-overlap/100));
 
 % b) limit to frequency band of interest:
 N=length(pxx);
-Nfreq=(N-1)*2;
+Nfreq=2*(N-1);
 f_scale=(Nfreq/Fs);
 itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
+itotal_bandpass=itotal_bandpass+1;
 itotal_bandpass(itotal_bandpass<1)=1;  itotal_bandpass(itotal_bandpass>N)=N;    
 
 
