@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2016-04-21 16:07:58 (otoolej)>
+% last update: Time-stamp: <2016-04-26 16:22:47 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -89,10 +89,9 @@ switch feat_name
     end
     
         
-    DBplot=1;
+    DBplot=0;
     if(DBplot)
         fpp=fp;
-        dispVars(length(fpp));
         figure(1); clf; hold all;
         subplot(321); hold all;
         plot(fpp,10*log10(X(ileft,:)'))
@@ -141,8 +140,8 @@ switch feat_name
             
             cc_pairs(p)=corr(env1',env2','type','pearson');
         end
-        dispVars(cc_pairs);
-        featx(n)=nanmedian(cc_pairs);
+% $$$         dispVars(cc_pairs);
+% $$$         featx(n)=nanmedian(cc_pairs);
     end
     
   case {'connectivity_coh_mean','connectivity_coh_max','connectivity_coh_freqmax'}
@@ -156,7 +155,7 @@ switch feat_name
     
     N_pairs=size(ipairs,2);
 
-    DBplot=1;    
+    DBplot=0;    
     if(DBplot)
         figure(1); clf; hold all;    
     end

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-04-15 18:28:07 (otoolej)>
+% last update: Time-stamp: <2016-04-26 16:23:10 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -159,7 +159,6 @@ switch feat_name
         ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
         ibandpass=ibandpass+1;
         ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
-        dispVars(fp(ibandpass(1)),fp(ibandpass(end)));
 
         pr=pxx(ibandpass)./sum(pxx(ibandpass));
     
