@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-03-2013
 %
-% last update: Time-stamp: <2016-04-05 12:58:36 (otoolej)>
+% last update: Time-stamp: <2016-04-25 16:05:15 (otoolej)>
 %-------------------------------------------------------------------------------
 function [bi_sigs,bi_labels]=set_bi_montage(sigs,channel_names,bi_mont)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -27,8 +27,10 @@ L=length(bi_mont);  [M,N]=size(sigs);
 bi_sigs=zeros(L,N);
 
 for n=1:L
-    isig_first=find(~cellfun(@isempty, strfind([channel_names],bi_mont{n}{1})));
-    isig_second=find(~cellfun(@isempty, strfind([channel_names],bi_mont{n}{2})));
+    isig_first=find(~cellfun(@isempty, strfind(upper([channel_names]), ...
+                                               upper(bi_mont{n}{1}))));
+    isig_second=find(~cellfun(@isempty, strfind(upper([channel_names]), ...
+                                                upper(bi_mont{n}{2}))));
     
     bi_sigs(n,:)=sigs(isig_first,:)-sigs(isig_second,:);
 end

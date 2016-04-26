@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-04-13 04:14:59 (otoolej)>
+% last update: Time-stamp: <2016-04-26 16:07:32 (otoolej)>
 %-------------------------------------------------------------------------------
 function feat_st=generate_all_features(fname,channel_names,feat_set)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
@@ -74,7 +74,10 @@ N_feats=length(feat_set);
 % A) iterate over features
 for n=1:N_feats
     
-    % analysis on a per-channel basis
+    %---------------------------------------------------------------------
+    % SPECTRAL and AMPLITUDE
+    % (analysis on a per-channel basis)
+    %---------------------------------------------------------------------
     if( any(strfind(feat_set{n},'spectral')) || ...
         any(strfind(feat_set{n},'amplitude')) )
 
@@ -100,7 +103,10 @@ for n=1:N_feats
         % and median over all channels:
         feat_st.(char(feat_set{n}))=nanmedian(feats_channel);
 
-    % or use all channels:
+    %---------------------------------------------------------------------
+    % CONNECTIVITY FEATURES
+    % (use over all channels)
+    %---------------------------------------------------------------------
     elseif(strfind(feat_set{n},'connectivity'))
 
         x_epochs=[]; 
@@ -117,6 +123,22 @@ for n=1:N_feats
         end
         % median over all epochs
         feat_st.(char(feat_set{n}))=nanmedian(feats_epochs);
+        
+
+    %---------------------------------------------------------------------
+    % inter-burst interval features
+    % (use entire recording but channel-by-channel)
+    %---------------------------------------------------------------------
+    elseif(strfind(feat_set{n},'IBI_'))
+        
+        % B) iterate over channels
+        feats_channel=[]; x_epochs=[]; 
+        for c=1:N_channels
+            feats_channel(c,:)=IBI_features(eeg_data(c,:)',Fs,feat_set{n});
+        end
+        % and median over all channels:
+        feat_st.(char(feat_set{n}))=nanmedian(feats_channel);
+
 
     end
 end

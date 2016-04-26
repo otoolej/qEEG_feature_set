@@ -16,64 +16,114 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2016-04-05 16:39:57 (otoolej)>
+% last update: Time-stamp: <2016-04-25 17:16:48 (otoolej)>
 %-------------------------------------------------------------------------------
-function data=remove_artefacts(data,ch_labels,Fs)
+function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
+if(nargin<4 || isempty(data_ref)), data_ref=[]; end
+if(nargin<5 || isempty(ch_refs)), ch_refs=[]; end
 
 
+quant_feats_parameters;
 
 [N_channels,N]=size(data);
+
+%---------------------------------------------------------------------
+% 0. check in referential mode first; is there problem with one 
+%    channel (e.g. Cz)
+%---------------------------------------------------------------------
+irem_channel=[];
+if(~isempty(data_ref))
+    x_filt=zeros(size(data_ref));
+    for n=1:size(data_ref,1)
+        x_filt(n,:)=filt_butterworth(data_ref(n,:),Fs,20,0.5,5);
+    end
+
+    
+    r=corrcoef(x_filt');
+    r(1:size(r,1)+1:end)=NaN;
+    r_channel=nanmean(r);
+    clear x_filt;
+
+    ilow=find(abs(r_channel)<ART_REF_LOW_CORR);
+    if(~isempty(ilow))
+        nn=1; irem_channel=[];
+        for n=ilow
+            ch_find=upper(ch_refs{n});
+            itmp=find(cellfun(@(x) ~isempty(strfind(x,ch_find)), upper(ch_labels)));
+            
+            irem_channel=[irem_channel itmp];
+            nn=nn+1;
+        end
+        
+        fprintf(':: remove channel (low ref. correlation): %s\n',ch_labels{irem_channel});
+    end
+    print_table(r_channel',{'corr'},ch_refs)    
+    data(irem_channel,:)=NaN;
+end
+
+ichannels=1:N_channels;
+ichannels(irem_channel)=[];
+N_channels=length(ichannels);
 
 
 %---------------------------------------------------------------------
 % 1. look for electrode short:
 %---------------------------------------------------------------------
 if(N_channels>4)
-    [ileft,iright]=channel_left_or_right(ch_labels);
+    [ileft,iright]=channel_left_or_right(ch_labels(ichannels));
 
-    x_means=zeros(1,N_channels);
+    if(length(ileft)>1 && length(iright)>1)
+        x_means=zeros(1,N_channels);
 
-    x_filt=zeros(N_channels,N);
-    for n=1:N_channels
-        x_filt(n,:)=filt_butterworth(data(n,:),Fs,20,0.5,5);
-    end
-
-
-    for n=1:N_channels
-        x_means(n)=nanmean( abs( x_filt(n,:) ).^2 );
-        
-        A{n,1}=x_means(n);
-        A{n,2}=ch_labels{n};
-    end
-    clear x_filt;
-    data_no=data; [M,N]=size(data);
-
-    % 1/4 of the median of channel energy:
-    cut_off_left=median(x_means(ileft))/4;
-    cut_off_right=median(x_means(iright))/4;
+        x_filt=zeros(N_channels,N);
+        for n=1:N_channels
+            x_filt(n,:)=filt_butterworth(data(ichannels(n),:),Fs,20,0.5,5);
+        end
 
 
-    ishort_left=find(x_means(ileft)<cut_off_left);
-    ishort_right=find(x_means(iright)<cut_off_right);
+        for n=1:N_channels
+            x_means(n)=nanmean( abs( x_filt(n,:) ).^2 );
+            
+            A{n,1}=x_means(n);
+            A{n,2}=ch_labels{ichannels(n)};
+        end
+        clear x_filt;
 
-    ishort=[ileft(ishort_left) iright(ishort_right)];
-    if(~isempty(ishort))
-        fprintf(':: remove channels: %s\n',ch_labels{ishort});
-        data_no(ishort,:)=NaN;
+        % 1/4 of the median of channel energy:
+        cut_off_left=median(x_means(ileft))/4;
+        cut_off_right=median(x_means(iright))/4;
+
+
+        ishort_left=find(x_means(ileft)<cut_off_left);
+        ishort_right=find(x_means(iright)<cut_off_right);
+
+        ishort=[ileft(ishort_left) iright(ishort_right)];
+        ishort=ichannels(ishort);
+        if(~isempty(ishort))
+            fprintf(':: remove channel (short): %s\n',ch_labels{ishort});
+            data(ishort,:)=NaN;
+            irem_channel=[irem_channel ishort];
+        end
     end
 end
 
+ichannels=1:size(data,1);
+ichannels(irem_channel)=[];
+N_channels=length(ichannels);
+
+
+
 % all other artefacts are on a channel-by-channel basis:
 irem=[];
-for n=1:N_channels
+for n=ichannels
     data(n,:)=art_per_channel(data(n,:),Fs);
     
     irem=[irem find(isnan(data(n,:)))];
 end
 
 % remove artefacts across all channels
-data(:,unique(irem))=NaN;
+data(ichannels,unique(irem))=NaN;
 
 
 

@@ -2,7 +2,7 @@
 % PREPROCESSING (lowpass filter and resample)
 %---------------------------------------------------------------------
 LP_fc=30;  % low-pass filter cut-off
-Fs_new=64; % ensure that (Fs/Fs_new) is integer
+Fs_new=64; % down-sample to Fs_new (Hz)
 
 
 %---------------------------------------------------------------------
@@ -41,7 +41,8 @@ ART_DIFF_MIN_TIME=0.1;      % min time (in seconds) for flat (continuous) trace 
 
 ART_ELEC_CHECK=1;   % minimum length required for electrode check (in seconds)
 
-
+ART_REF_LOW_CORR=0.1; % if mean correlation coefficent across referential channels  
+                       % is < this value then remove
 
 %---------------------------------------------------------------------
 % FEATURES
