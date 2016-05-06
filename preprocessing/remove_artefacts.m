@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2016-04-25 17:16:48 (otoolej)>
+% last update: Time-stamp: <2016-05-03 17:27:45 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -36,7 +36,7 @@ irem_channel=[];
 if(~isempty(data_ref))
     x_filt=zeros(size(data_ref));
     for n=1:size(data_ref,1)
-        x_filt(n,:)=filt_butterworth(data_ref(n,:),Fs,20,0.5,5);
+        x_filt(n,:)=filter_butterworth_withnans(data_ref(n,:),Fs,20,0.5,5);
     end
 
     
@@ -78,7 +78,7 @@ if(N_channels>4)
 
         x_filt=zeros(N_channels,N);
         for n=1:N_channels
-            x_filt(n,:)=filt_butterworth(data(ichannels(n),:),Fs,20,0.5,5);
+            x_filt(n,:)=filter_butterworth_withnans(data(ichannels(n),:),Fs,20,0.5,5);
         end
 
 
@@ -138,7 +138,34 @@ DBverbose=1;
 N=length(x);
 
 %---------------------------------------------------------------------
-% 1. high-amplitude artefacts
+% 1. electrode-checks (continuous row of zeros)
+%---------------------------------------------------------------------
+x_channel=x;
+x_channel(x_channel~=0)=1;
+irem=zeros(1,N);    
+[lens,istart,iend]=len_cont_zeros(x_channel,0);
+ielec=find(lens>=(ART_ELEC_CHECK*Fs));
+if(~isempty(ielec) && DBverbose)
+    fprintf(['electrode check at time(s): ' repmat('%g ',1,length(ielec))  ...
+             ' \n'],istart(ielec)./Fs);
+end
+for m=ielec
+    irun=[istart(m)-1:iend(m)+1];
+    irun(irun<1)=1; irun(irun>=N)=N;
+    irem(irun)=1;
+    x(irun)=NaN;
+end
+if(any(irem==1) && DBverbose)
+    fprintf('continuous row of zeros: %.2f\n', ...
+            100*length(find(irem==1))/length(x));
+end
+
+x_nofilt=x;
+[x,inans]=filter_butterworth_withnans(x,Fs,40,0.5,5);
+
+
+%---------------------------------------------------------------------
+% 2. high-amplitude artefacts
 %---------------------------------------------------------------------
 art_coll=ART_TIME_COLLAR*Fs;
 irem=zeros(1,N);    
@@ -160,29 +187,6 @@ if(any(irem==1) && DBverbose)
             100*length(find(irem==1))/length(x));
 end
 
-
-%---------------------------------------------------------------------
-% 2. electrode-checks (continuous row of zeros)
-%---------------------------------------------------------------------
-x_channel=x;
-x_channel(x_channel~=0)=1;
-irem=zeros(1,N);    
-[lens,istart,iend]=len_cont_zeros(x_channel,0);
-ielec=find(lens>=(ART_ELEC_CHECK*Fs));
-if(~isempty(ielec) && DBverbose)
-    fprintf(['electrode check at time(s): ' repmat('%g ',1,length(ielec))  ...
-             ' \n'],istart(ielec)./Fs);
-end
-for m=ielec
-    irun=[istart(m)-1:iend(m)+1];
-    irun(irun<1)=1; irun(irun>=N)=N;
-    irem(irun)=1;
-    x(irun)=NaN;
-end
-if(any(irem==1) && DBverbose)
-    fprintf('continuous row of zeros: %.2f\n', ...
-            100*length(find(irem==1))/length(x));
-end
 
 
 
@@ -223,7 +227,7 @@ art_coll=ART_DIFF_TIME_COLLAR*Fs;
 irem=zeros(1,N);    
 x_diff=x_diff_all;    
     
-ihigh=find(abs(x_diff)>200);
+ihigh=find(abs(x_diff)>ART_DIFF_VOLT);
 if(~isempty(ihigh))
     for p=1:length(ihigh)
         irun=(ihigh(p)-art_coll):(ihigh(p)+art_coll);
@@ -231,9 +235,24 @@ if(~isempty(ihigh))
         irem(irun)=1;
     end
 end
+xb=x;
 x(irem==1)=NaN;
+
+
+% before filtering, but should be eliminated anyway
+x(inans)=NaN;
+inans=find(isnan(x));
+x_nofilt(inans)=NaN;
+x=x_nofilt;
+
+
 if(any(irem==1) && DBverbose)
     fprintf('length of sudden-jump artefacts: %.2f\n', ...
             100*length(find(irem==1))/length(x));
+    
+% $$$     figure(22); clf; hold all;
+% $$$     plot(x); plot(xb);
+% $$$     disp('--- paused; hit key to continue ---'); pause;
+
 end
 

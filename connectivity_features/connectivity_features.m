@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2016-04-26 16:22:47 (otoolej)>
+% last update: Time-stamp: <2016-05-04 14:48:01 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -48,8 +48,6 @@ if(isempty(freq_bands))
     N_freq_bands=1;
 end
 
-x_orig=x;
-
 
 if(N_channels>2  && ~isempty(ch_labels))
     [ileft,iright]=channel_hemispheres(ch_labels);
@@ -66,6 +64,9 @@ switch feat_name
   case 'connectivity_BSI'
     %---------------------------------------------------------------------
     % brain sysmetry index (revised version, Van Putten, 2007)
+    %
+    % van Putten, M. J. A. M. (2007). The revised brain symmetry index. Clinical
+    % Neurophysiology, 118(11), 2362–2367. http://doi.org/10.1016/j.clinph.2007.07.019
     %---------------------------------------------------------------------
 
     % a) PSD estimate (Welch's periodogram):
@@ -73,23 +74,31 @@ switch feat_name
     overlap=ceil(win_length*(1-params_st.PSD_overlap/100));
 
     % assuming just two pairs corresponding to left/right:
-    X=[]; X_left=[]; X_right=[];
-    for k=1:size(x,1)
-        [X(k,:),fp]=pwelch(x(k,:),win_length,overlap,[],Fs);
+    N_pxx=floor(max([256 2^nextpow2(win_length)])/2)+1;
+    N_channels=size(x,1);
+    X=NaN(N_channels,N_pxx);
+    X_left=NaN(1,N_pxx); X_right=NaN(1,N_pxx);    
+    
+    for k=1:N_channels
+        x_epoch=x(k,:);
+        x_epoch(isnan(x_epoch))=[];
+        
+        if(length(x_epoch)>=win_length)
+            [X(k,:),fp]=pwelch(x_epoch,win_length,overlap,[],Fs);
+        end
     end
 
     N=size(X,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
 
     if(length(ileft)>1)
-        X_left=sum(X(ileft,:),1);
-        X_right=sum(X(iright,:),1);            
+        X_left=nanmean(X(ipairs(1,:),:),1).*N_pxx;
+        X_right=nanmean(X(ipairs(2,:),:),1).*N_pxx;            
     else
         X_left=X(ileft,:);
         X_right=X(iright,:);            
     end
     
         
-    DBplot=0;
     if(DBplot)
         fpp=fp;
         figure(1); clf; hold all;
@@ -130,19 +139,30 @@ switch feat_name
     N_pairs=size(ipairs,2);
     for n=1:N_freq_bands
         for p=1:N_channels
-            x_filt(p,:)=filt_butterworth(x(p,:),Fs,freq_bands(n,2),freq_bands(n,1),5);
+            [x_filt(p,:),inans{p}]=filter_butterworth_withnans(x(p,:),Fs,freq_bands(n,2), ...
+                                                    freq_bands(n,1),5, ...
+                                                    params_st.FILTER_REPLACE_ARTEFACTS);
         end
 
         cc_pairs=NaN(1,N_pairs);
         for p=1:N_pairs
-            env1=abs( hilbert(x_filt(ipairs(1,p),:)) ).^2;
-            env2=abs( hilbert(x_filt(ipairs(2,p),:)) ).^2;                
+            all_inans=unique([inans{ipairs(1,p)} inans{ipairs(2,p)}]);
+            
+            x1=x_filt(ipairs(1,p),:);
+            x2=x_filt(ipairs(2,p),:);
+            if(~isempty(all_inans))
+        	x1(all_inans)=[];
+        	x2(all_inans)=[];                
+            end
+            
+            env1=abs( hilbert(x1) ).^2;
+            env2=abs( hilbert(x2) ).^2;                
             
             cc_pairs(p)=corr(env1',env2','type','pearson');
         end
-% $$$         dispVars(cc_pairs);
-% $$$         featx(n)=nanmedian(cc_pairs);
+        featx(n)=nanmedian(cc_pairs);
     end
+
     
   case {'connectivity_coh_mean','connectivity_coh_max','connectivity_coh_freqmax'}
     %---------------------------------------------------------------------
@@ -162,9 +182,14 @@ switch feat_name
     
     featx_pairs=NaN(N_freq_bands,N_pairs);
     for p=1:N_pairs        
-        pxx=pwelch(x(ipairs(1,p),:),win_length,overlap,[],Fs);
-        pyy=pwelch(x(ipairs(2,p),:),win_length,overlap,[],Fs);        
-        [pxy,fp]=cpsd(x(ipairs(1,p),:),x(ipairs(2,p),:),win_length,overlap,[],Fs);        
+        x1=x(ipairs(1,p),:);
+        x2=x(ipairs(2,p),:);
+        x1(isnan(x1))=[];
+        x2(isnan(x2))=[];        
+        
+        pxx=pwelch(x1,win_length,overlap,[],Fs);
+        pyy=pwelch(x2,win_length,overlap,[],Fs);        
+        [pxy,fp]=cpsd(x1,x2,win_length,overlap,[],Fs);        
         
         coh(p,:)=(abs(pxy).^2)./(pxx.*pyy);
 
@@ -203,22 +228,35 @@ switch feat_name
   case 'connectivity_lag_corr'
     %---------------------------------------------------------------------
     % lag of cross-correlation 
-    % (not sure about if this one make sense with >2  channels?? )
+    % (NOT FINISHED!! needs more testing)
     %---------------------------------------------------------------------
+    N_pairs=size(ipairs,2);    
     for n=1:N_freq_bands
-        
-        x_filt(1,:)=filt_butterworth(x(1,:),Fs,freq_bands(n,2),freq_bands(n,1),5);
-        x_filt(2,:)=filt_butterworth(x(2,:),Fs,freq_bands(n,2),freq_bands(n,1),5);
-        
-        [cc,lag]=xcorr(x_filt(1,:),x_filt(2,:),'biased');
+        for p=1:N_channels
+            [x_filt(p,:),inans{p}]=filter_butterworth_withnans(x(p,:),Fs,freq_bands(n,2), ...
+                                                              freq_bands(n,1),5, ...
+                                                              params_st.FILTER_REPLACE_ARTEFACTS);
+        end
 
-        [~,imax]=max(abs(cc));
-        time_max_lag=lag(imax)/Fs;
-
-% $$$         figure(1); clf; hold all;
-% $$$         plot(lag,cc);
+        time_max_lag=NaN(1,N_pairs);
+        for p=1:N_pairs
+            all_inans=unique([inans{ipairs(1,p)} inans{ipairs(2,p)}]);
+            
+            x1=x_filt(ipairs(1,p),:);
+            x2=x_filt(ipairs(2,p),:);
+            if(~isempty(all_inans))
+        	x1(all_inans)=[];
+        	x2(all_inans)=[];                
+            end
         
-        featx(n)=time_max_lag;
+        
+            [cc,lag]=xcorr(x1,x2,'biased');
+
+            [~,imax]=max(abs(cc));
+            time_max_lag(p)=lag(imax)/Fs;
+        end
+
+        featx(n)=nanmean(time_max_lag);
 
     end
     

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-04-26 16:23:10 (otoolej)>
+% last update: Time-stamp: <2016-05-04 11:15:35 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -28,7 +28,7 @@ DBplot=0;
 if(isempty(params_st))
     quant_feats_parameters;
     if(strfind(feat_name,'spectral'))
-        params_st=feat_params_st.spec;
+        params_st=feat_params_st.spectral;
     else
         params_st=feat_params_st.(char(feat_name));
     end
@@ -38,7 +38,7 @@ freq_bands=params_st.freq_bands;
 total_freq_bands=params_st.total_freq_bands;
 
 switch feat_name
-  case {'spectral_power','relative_spectral_power'}
+  case {'spectral_power','spectral_relative_power'}
 
     % 2 different options for generating spectral power measures:
     switch params_st.method
@@ -48,13 +48,13 @@ switch feat_name
         %---------------------------------------------------------------------
         [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
                                                    params_st.overlap,freq_bands,total_freq_bands,Fs);
-        
+
         if(DBplot)
             figure(1); clf; hold all;
             plot(fp,20*log10(pxx));
         end
         
-        if(strcmp(feat_name,'relative_spectral_power'))
+        if(strcmp(feat_name,'spectral_relative_power'))
             pxx_total=sum( pxx(itotal_bandpass) );
         else
             pxx_total=1;
@@ -88,7 +88,7 @@ switch feat_name
         
         [N_epochs,M]=size(S_stft);
 
-        if(strcmp(feat_name,'relative_spectral_power'))
+        if(strcmp(feat_name,'spectral_relative_power'))
             itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
             itotal_bandpass=itotal_bandpass+1;
             itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>M)=M;  
@@ -105,7 +105,7 @@ switch feat_name
             for k=1:N_epochs
                 pxx=S_stft(k,:);
                 
-                if(strcmp(feat_name,'relative_spectral_power'))
+                if(strcmp(feat_name,'spectral_relative_power'))
                     spec_pow(k,p)=sum( pxx(ibandpass) )/sum( pxx(itotal_bandpass) );
                 else
                     spec_pow(k,p)=sum( pxx(ibandpass) );
@@ -150,7 +150,7 @@ switch feat_name
     %---------------------------------------------------------------------
     [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
                                     params_st.overlap, freq_bands,total_freq_bands,Fs);
-    
+
     % for each frequency band:
     N_freq_bands=size(freq_bands,1);
     featx=NaN(1,N_freq_bands);
@@ -205,14 +205,13 @@ switch feat_name
     %---------------------------------------------------------------------
     % spectral edge frequency
     %---------------------------------------------------------------------
-    
     [pxx,itotal_bandpass,~,fp]=psd_Welch(x,params_st.L_window,params_st.window_type, ...
                                     params_st.overlap, freq_bands, total_freq_bands,Fs);
     
+
     % only within this frequency band:
     pxx(setdiff(1:length(pxx),itotal_bandpass))=0;
 
-    plot(fp,20*log10(pxx));
     
     pxx=pxx./sum(pxx);
 
@@ -225,6 +224,17 @@ switch feat_name
     [vv, idx]=min(abs(pxx_cum-params_st.SEF));
     featx=fp(idx);
 
+    
+    if(DBplot)
+        figure(2); clf; hold all;
+        hx(1)=subplot(211); hold all;
+        plot(fp,pxx_cum);
+        line([1 1].*featx,ylim,'color','r');
+        line(xlim,[1 1].*params_st.SEF,'color','r');        
+        hx(1)=subplot(212); hold all;
+        plot(fp,10*log10(pxx));
+    end
+    
     
 end
 
@@ -240,6 +250,9 @@ function [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,L_window,window_type,overl
 % a) PSD estimate (Welch's periodogram):
 win_length=make_odd(L_window*Fs);
 overlap=ceil(win_length*(1-overlap/100));
+
+% remove NaNs:
+x(isnan(x))=[];
 
 [pxx,fp]=pwelch(x,win_length,overlap,[],Fs);
 

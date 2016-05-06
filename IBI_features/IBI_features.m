@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 26-04-2016
 %
-% last update: Time-stamp: <2016-04-26 16:17:37 (otoolej)>
+% last update: Time-stamp: <2016-05-03 17:21:44 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=IBI_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -56,10 +56,6 @@ if(DBplot)
     hx(2)=subplot(212); plot(burst_anno); ylim([-0.2 1.2])
     linkaxes(hx,'x');
 end
-% $$$ lb=len_zeros(burst_anno,1);
-% $$$ libi=len_zeros(burst_anno,0);
-% $$$ fprintf('BURSTS: min=%g; max=%g\n',min(lb)./Fs,max(lb)./Fs);
-% $$$ fprintf('IBI:    min=%g; max=%g\n',min(libi)./Fs,max(libi)./Fs);
 
 
 
