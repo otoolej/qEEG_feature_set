@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 27-05-2013
 %
-% last update: Time-stamp: <2016-04-25 17:23:15 (otoolej)>
+% last update: Time-stamp: <2016-04-29 18:41:13 (otoolej)>
 %-------------------------------------------------------------------------------
 function [eeg_data,Fs]=resample_savemat(fname,channel_names)
 if(nargin<1 || isempty(fname)), fname=[]; end
@@ -81,6 +81,10 @@ else
         hx(1)=subplot(211); hold all;
         plot((1:size(data,2))./Fs,data');
     end    
+    
+    % SPECIAL CASE FOR THE MOBERG DATA: reverse polarity of C4
+% $$$     ic4=find(strcmp(ch_labels,'C4'));
+% $$$     data(ic4,:)=-data(ic4,:);
 end
 
 

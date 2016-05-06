@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2016-04-13 04:14:05 (otoolej)>
+% last update: Time-stamp: <2016-05-03 16:17:08 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -43,11 +43,11 @@ end
 
 x_orig=x;
 
-
 for n=1:N_freq_bands
     
     if(~isempty(freq_bands))
-        x=filt_butterworth(x_orig,Fs,freq_bands(n,2),freq_bands(n,1),5);
+        x=filter_butterworth_withnans(x_orig,Fs,freq_bands(n,2),freq_bands(n,1),5, ...
+                                      params_st.FILTER_REPLACE_ARTEFACTS);
     end
     
 
@@ -58,20 +58,19 @@ for n=1:N_freq_bands
         %---------------------------------------------------------------------
         featx(n)=nanmean( abs(x).^2 );
         
-      case {'amplitude_env_mean','amplitude_env'}
+      case {'amplitude_env_mean','amplitude_env','amplitude_env_SD'}
         %---------------------------------------------------------------------
-        % mean of envelope
+        % mean or SD of envelope
         %---------------------------------------------------------------------
+        x(isnan(x))=[];
         env=abs( hilbert(x) ).^2;
-        featx(n)=nanmean(env);
         
-      case 'amplitude_env_SD'
-        %---------------------------------------------------------------------
-        % SD of envelope
-        %---------------------------------------------------------------------
-        env=abs( hilbert(x) ).^2;
-        featx(n)=std(env);
-
+        if(strcmp(feat_name,'amplitude_env_mean') || strcmp(feat_name,'amplitude_env'))
+            featx(n)=nanmean(env);
+        elseif(strcmp(feat_name,'amplitude_env_SD'))
+            featx(n)=std(env);
+        end
+        
       case 'amplitude_skew'
         %---------------------------------------------------------------------
         % skew of amplitude

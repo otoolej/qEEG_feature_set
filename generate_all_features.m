@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-04-26 16:07:32 (otoolej)>
+% last update: Time-stamp: <2016-05-04 11:57:50 (otoolej)>
 %-------------------------------------------------------------------------------
 function feat_st=generate_all_features(fname,channel_names,feat_set)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
@@ -40,9 +40,9 @@ else
 
     % load from .mat file:
     d=load([EEG_DATA_DIR_MATFILES fname '.mat']);
-    fprintf('<strong> loading EEG data from file saved on %s </strong>\n',datestr(d.time_now));
+    fprintf(col_str(' loading EEG data from file saved on %s\n',1),datestr(d.time_now));
     eeg_data=d.eeg_data; Fs=d.Fs; ch_labels=d.ch_labels;
-    
+
 end
 
 
@@ -58,6 +58,21 @@ if(~isempty(channel_names))
     eeg_data=eeg_data(ikeep,:);
     ch_labels=ch_labels(ikeep);
 end
+% $$$ keyboard;
+% or remove empty channels:
+irem=[];
+for n=1:length(ch_labels)
+    if( all(isnan(eeg_data(n,:))) )
+        irem=[irem n];
+    end
+end
+if(~isempty(irem))
+% $$$     fprintf('removing channels: %s\n',ch_labels(irem));
+    eeg_data(irem,:)=[]; ch_labels(irem)=[];
+end
+
+
+
 
 
 [N_channels,N]=size(eeg_data);
@@ -73,13 +88,17 @@ N_feats=length(feat_set);
 
 % A) iterate over features
 for n=1:N_feats
+
+    L_feature=size_feature(feat_set{n});
+    feat_group=strsplit(feat_set{n},'_');
+    feat_group=feat_group{1};
+
     
     %---------------------------------------------------------------------
     % SPECTRAL and AMPLITUDE
-    % (analysis on a per-channel basis)
+    % (analysis on a per-channel basis and divide each channel into epochs)
     %---------------------------------------------------------------------
-    if( any(strfind(feat_set{n},'spectral')) || ...
-        any(strfind(feat_set{n},'amplitude')) )
+    if( any(strcmp({'amplitude','spectral'},feat_group)) )
 
         % B) iterate over channels
         feats_channel=[]; x_epochs=[]; 
@@ -88,13 +107,17 @@ for n=1:N_feats
             N_epochs=size(x_epochs,1);
             
             % C) iterate over epochs
-            feats_epochs=[];
+            feats_epochs=NaN(N_epochs,L_feature);
             for e=1:N_epochs
-                if(any(strfind(feat_set{n},'spectral')))
-                    feats_epochs(e,:)=spectral_features(x_epochs(e,:),Fs,feat_set{n});
+                L_nans=length(find(isnan(x_epochs(e,:))));
+                
+                if(100*(L_nans/length(x_epochs(e,:))) < EPOCH_IGNORE_PRC_NANS)
+                    if(strcmp(feat_group,'spectral'))
+                        feats_epochs(e,:)=spectral_features(x_epochs(e,:),Fs,feat_set{n});
                     
-                elseif(any(strfind(feat_set{n},'amplitude')))
-                    feats_epochs(e,:)=amplitude_features(x_epochs(e,:),Fs,feat_set{n});
+                    elseif(strcmp(feat_group,'amplitude'))
+                        feats_epochs(e,:)=amplitude_features(x_epochs(e,:),Fs,feat_set{n});
+                    end
                 end
             end
             % median over all epochs
@@ -105,7 +128,7 @@ for n=1:N_feats
 
     %---------------------------------------------------------------------
     % CONNECTIVITY FEATURES
-    % (use over all channels)
+    % (use over all channels but also divide into epochs)
     %---------------------------------------------------------------------
     elseif(strfind(feat_set{n},'connectivity'))
 
@@ -116,10 +139,19 @@ for n=1:N_feats
         N_epochs=size(x_epochs,2); 
         
         % B) iterate over epochs:
-        feats_epochs=[]; x_ep=[];
+        feats_epochs=NaN(N_epochs,L_feature);
+        x_ep=[];
+        
         for e=1:N_epochs
             x_ep=reshape(x_epochs(:,e,:),size(x_epochs,1),size(x_epochs,3));
-            feats_epochs(e,:)=connectivity_features(x_ep,Fs,feat_set{n});
+            
+            L_nans=length(find(isnan(x_ep(:))));
+            if(100*(L_nans/length(x_ep(:))) < EPOCH_IGNORE_PRC_NANS)
+                
+                feats_epochs(e,:)=connectivity_features(x_ep,Fs,feat_set{n},[], ...
+                                                        ch_labels);
+            end
+            
         end
         % median over all epochs
         feat_st.(char(feat_set{n}))=nanmedian(feats_epochs);
@@ -132,7 +164,7 @@ for n=1:N_feats
     elseif(strfind(feat_set{n},'IBI_'))
         
         % B) iterate over channels
-        feats_channel=[]; x_epochs=[]; 
+        feats_channel=NaN(N_channels,L_feature); 
         for c=1:N_channels
             feats_channel(c,:)=IBI_features(eeg_data(c,:)',Fs,feat_set{n});
         end

@@ -16,19 +16,23 @@
 % John M. O' Toole, University College Cork
 % Started: 20-04-2016
 %
-% last update: Time-stamp: <2016-04-20 16:35:36 (otoolej)>
+% last update: Time-stamp: <2016-04-27 10:23:32 (otoolej)>
 %-------------------------------------------------------------------------------
 function ipairs=channel_hemisphere_pairs(channel_labels)
+
+DBverbose=0;
 
 N=length(channel_labels);
 [ileft,iright]=channel_hemispheres(channel_labels);
 
-ipairs=NaN(2,length(ileft));
+N_left=length(ileft);
+
+ipairs=NaN(2,N_left);
 
 channel_labels=upper(channel_labels);
 
 
-for n=1:length(ileft)
+for n=1:N_left
     ipairs(1,n)=ileft(n);    
     ch_left=upper(channel_labels{ileft(n)});
     
@@ -50,11 +54,29 @@ for n=1:length(ileft)
     elseif(~isempty(imatch_rv))
         ipairs(2,n)=iright(imatch_rv);        
     else
-        warning(sprintf('no matching pair for channel: %s',ch_left));
+        ipairs(1:2,n)=NaN;
+        if(DBverbose)
+            fprintf('no matching pair for channel: %s\n',ch_left);        
+% $$$         warning(sprintf('no matching pair for channel: %s',ch_left));
+        end
     end
 
 
-% $$$     dispVars(channel_labels(ipairs(1,n)),channel_labels(ipairs(2,n)));
 end
+
+irem=[];
+for n=1:N_left
+    if(any(isnan(ipairs(:,n))))
+        irem=[irem n];
+    end
+end
+if(~isempty(irem))
+    ipairs(:,irem)=[];    
+    
+    if(DBverbose),  print_table(channel_labels(ipairs)); end
+end
+
+
+
 
 

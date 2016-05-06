@@ -19,7 +19,7 @@
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2016-04-19 12:24:23 (otoolej)>
+% last update: Time-stamp: <2016-05-04 14:49:31 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -49,7 +49,8 @@ for n=1:N_freq_bands
 
     % filter (if necessary)
     if(~isempty(freq_bands))
-        x_filt=filt_butterworth(x,Fs,freq_bands(n,2),freq_bands(n,1),5);    
+        x_filt=filter_butterworth_withnans(x,Fs,freq_bands(n,2),freq_bands(n,1),5,...
+                                           params_st.FILTER_REPLACE_ARTEFACTS);
     else        
         x_filt=x;
     end
@@ -121,7 +122,7 @@ for n=1:N_freq_bands
         %---------------------------------------------------------------------
         % coefficient of variation 
         %---------------------------------------------------------------------
-        line(xlim,[1 1].*nanmedian(reeg),'color','r','linewidth',2);
+% $$$         line(xlim,[1 1].*nanmedian(reeg),'color','r','linewidth',2);
         
         A=nanmedian(reeg) - prctile(reeg,5);
         B=prctile(reeg,95) - nanmedian(reeg);
