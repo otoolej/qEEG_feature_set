@@ -16,14 +16,14 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-05-04 11:57:50 (otoolej)>
+% last update: Time-stamp: <2016-10-03 08:53:57 (otoolej)>
 %-------------------------------------------------------------------------------
 function feat_st=generate_all_features(fname,channel_names,feat_set)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
 if(nargin<3 || isempty(feat_set)), feat_set=[]; end
 
 
-quant_feats_parameters;
+qEEGfs_parameters;
 
 
 %---------------------------------------------------------------------
@@ -72,9 +72,6 @@ if(~isempty(irem))
 end
 
 
-
-
-
 [N_channels,N]=size(eeg_data);
 
 %---------------------------------------------------------------------
@@ -93,12 +90,11 @@ for n=1:N_feats
     feat_group=strsplit(feat_set{n},'_');
     feat_group=feat_group{1};
 
-    
     %---------------------------------------------------------------------
     % SPECTRAL and AMPLITUDE
     % (analysis on a per-channel basis and divide each channel into epochs)
     %---------------------------------------------------------------------
-    if( any(strcmp({'amplitude','spectral'},feat_group)) )
+    if( any(strcmp({'amplitude','spectral','rEEG','fd'},feat_group)) )
 
         % B) iterate over channels
         feats_channel=[]; x_epochs=[]; 
@@ -113,10 +109,19 @@ for n=1:N_feats
                 
                 if(100*(L_nans/length(x_epochs(e,:))) < EPOCH_IGNORE_PRC_NANS)
                     if(strcmp(feat_group,'spectral'))
-                        feats_epochs(e,:)=spectral_features(x_epochs(e,:),Fs,feat_set{n});
-                    
+                        feats_epochs(e,:)=spectral_features(x_epochs(e,:),Fs, ...
+                                                            feat_set{n});
+                        
+                    elseif(strcmp(feat_group,'fd'))
+                        feats_epochs(e,:)=fd_features(x_epochs(e,:),Fs, feat_set{n});
+                        
                     elseif(strcmp(feat_group,'amplitude'))
-                        feats_epochs(e,:)=amplitude_features(x_epochs(e,:),Fs,feat_set{n});
+                        feats_epochs(e,:)=amplitude_features(x_epochs(e,:),Fs, ...
+                                                             feat_set{n});
+                        
+                    elseif(strcmp(feat_group,'rEEG'))
+                        feats_epochs(e,:)=rEEG(x_epochs(e,:),Fs,feat_set{n});
+                        
                     end
                 end
             end
@@ -190,7 +195,7 @@ if(nargin<5 || isempty(window_type)), window_type='rect'; end
 [L_hop,L_epoch,win_epoch]=get_epoch_window(overlap,L_window,window_type,Fs);
 
 N=length(x);
-N_epochs=floor( (N-L_epoch)/L_hop );
+N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );
 if(N_epochs<1) N_epochs=1; end
 nw=0:L_epoch-1;
 

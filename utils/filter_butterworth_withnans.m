@@ -30,7 +30,8 @@ inans=[];
 % check values:
 if(F3db_lowpass<=0 | F3db_lowpass>=(Fs/2) | ...
    F3db_highpass<=0 | F3db_highpass>=(Fs/2))
-    disp('invalid filter value; ignoring');
+    fprintf('invalid filter value; ignoring\n');
+    fprintf('  (high-pass/low-pass cut off: %g/%g)\n',F3db_highpass,F3db_lowpass);
     y=x;
     return;
 end

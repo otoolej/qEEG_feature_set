@@ -19,7 +19,7 @@
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2016-05-04 14:49:31 (otoolej)>
+% last update: Time-stamp: <2016-08-30 16:33:47 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -29,7 +29,7 @@ if(nargin<4 || isempty(params_st)), params_st=[]; end
 
 
 if(isempty(params_st))
-    quant_feats_parameters;
+    qEEGfs_parameters;
     if(strfind(feat_name,'rEEG'))
         params_st=feat_params_st.rEEG;
     else
@@ -142,10 +142,9 @@ function reeg=gen_rEEG(x,Fs,win_length,win_overlap,win_type,APPLY_LOG_LINEAR_SCA
 
 
 N=length(x);
-N_epochs=floor( (N-L_epoch)/L_hop );
+N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );
 if(N_epochs<1) N_epochs=1; end
 nw=0:L_epoch-1;
-Nfreq=2^nextpow2(L_epoch);
 
 %---------------------------------------------------------------------
 % generate short-time FT on all data:

@@ -75,6 +75,7 @@ FREQ_BANDS=[0.5 3; 3 8; 8 15; 15 30];
 % 3) med-spectogram: median (instead of mean) of spectrogram 
 feat_params_st.spectral.method='PSD'; 
 
+
 % length of time-domain analysis window and overlap:
 % (applies to 'spectral_power','spectral_relative_power',
 %  'spectral_flatness', and 'spectral_diff' features)
@@ -84,6 +85,13 @@ feat_params_st.spectral.overlap=50; % overlap in percentage
 feat_params_st.spectral.freq_bands=FREQ_BANDS;
 feat_params_st.spectral.total_freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
 feat_params_st.spectral.SEF=0.95;  % spectral edge frequency
+
+% fractal dimension (FD):
+feat_params_st.fd.method='higuchi'; % method to estimate FD, either 'higuchi' or 'katz'
+feat_params_st.fd.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
+% $$$ feat_params_st.fd.freq_bands=FREQ_BANDS;
+feat_params_st.fd.kmax=6;  % Higuchi method: max. value of k
+
 
 % for amplitude features:
 % $$$ feat_params_st.amplitude.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
@@ -120,6 +128,8 @@ FILTER_REPLACE_ARTEFACTS='cubic_interp';
 feat_params_st.amplitude.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
 feat_params_st.rEEG.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
 feat_params_st.connectivity.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+feat_params_st.fd.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+
 
 %---------------------------------------------------------------------
 % SHORT-TIME ANALYSIS on EEG

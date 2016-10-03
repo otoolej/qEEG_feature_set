@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2016-05-03 16:17:08 (otoolej)>
+% last update: Time-stamp: <2016-08-30 16:32:52 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -27,7 +27,7 @@ DBplot=0;
 
 % so far no parameters but maybe later:
 if(isempty(params_st))
-    quant_feats_parameters;
+    qEEGfs_parameters;
     if(strfind(feat_name,'amplitude'))
         params_st=feat_params_st.amplitude;
     else
@@ -70,6 +70,12 @@ for n=1:N_freq_bands
         elseif(strcmp(feat_name,'amplitude_env_SD'))
             featx(n)=std(env);
         end
+        
+      case 'amplitude_SD'
+        %---------------------------------------------------------------------
+        % standard deviation of amplitude
+        %---------------------------------------------------------------------
+        featx(n)=nanstd(x);
         
       case 'amplitude_skew'
         %---------------------------------------------------------------------

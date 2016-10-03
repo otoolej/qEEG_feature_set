@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2016-05-03 17:27:45 (otoolej)>
+% last update: Time-stamp: <2016-09-12 15:43:56 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -24,7 +24,9 @@ if(nargin<4 || isempty(data_ref)), data_ref=[]; end
 if(nargin<5 || isempty(ch_refs)), ch_refs=[]; end
 
 
-quant_feats_parameters;
+qEEGfs_parameters;
+
+DBverbose=0;
 
 [N_channels,N]=size(data);
 
@@ -58,7 +60,9 @@ if(~isempty(data_ref))
         
         fprintf(':: remove channel (low ref. correlation): %s\n',ch_labels{irem_channel});
     end
-    print_table(r_channel',{'corr'},ch_refs)    
+    if(DBverbose)
+        print_table(r_channel',{'corr'},ch_refs)    
+    end
     data(irem_channel,:)=NaN;
 end
 
@@ -68,7 +72,7 @@ N_channels=length(ichannels);
 
 
 %---------------------------------------------------------------------
-% 1. look for electrode short:
+% 1. look for electrode coupling:
 %---------------------------------------------------------------------
 if(N_channels>4)
     [ileft,iright]=channel_left_or_right(ch_labels(ichannels));
@@ -101,12 +105,16 @@ if(N_channels>4)
         ishort=[ileft(ishort_left) iright(ishort_right)];
         ishort=ichannels(ishort);
         if(~isempty(ishort))
-            fprintf(':: remove channel (short): %s\n',ch_labels{ishort});
+            fprintf(':: remove channel (electrode coupling): %s\n',ch_labels{ishort});
             data(ishort,:)=NaN;
             irem_channel=[irem_channel ishort];
         end
     end
 end
+
+if(DBverbose),  print_table(A); end
+
+
 
 ichannels=1:size(data,1);
 ichannels(irem_channel)=[];
@@ -131,7 +139,7 @@ function x=art_per_channel(x,Fs)
 %---------------------------------------------------------------------
 % remove artefacts on a per-channel basis
 %---------------------------------------------------------------------
-quant_feats_parameters;
+qEEGfs_parameters;
 
 DBverbose=1;
 

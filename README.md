@@ -11,25 +11,20 @@ interval). Burst annotations require a separate package, also available on
 # requirements:
 Matlab (R2013 or newer,
 [Mathworks](http://www.mathworks.co.uk/products/matlab/)) with the signal
-processing toolbox and stastics toolbox. Not tested with Octave but should work with minor
+processing toolbox and statistics toolbox. Not tested with Octave but should work with minor
 tweaking.
 
 # use 
 
 ```matlab
-    % generate some EEG-like data:
-	data_st.Fs=64; % sample frequency in Hz
-	data_st.eeg_data=randn(8,5*60*data_st.Fs); % 5 mins. of 8-channel EEG
-	data_st.ch_labels={'C3-O1','C4-O2','Cz-C3','C4-Cz','C3-T3','C4-T4','F3-C3','F4-C4'};
+	% generate EEG-like data (coloured Gaussian noise)
+	data_st=gen_test_EEGdata(5*60,64,1);
 
-    % define feature set (or can define in quant_feats_parameters.m):
-	feature_set={'spectral_relative_power','spectral_flatness', ...
-	     'amplitude_total_power', 'amplitude_kurtosis','rEEG_SD', ...
-	     'connectivity_BSI','connectivity_coh_max'};
+	% define feature set (or can define in qEEGfs_parameters.m):
+	feature_set={'spectral_relative_power','rEEG_SD', 'connectivity_BSI'};
 	
-	
-	% generate features:
-    feat_st=generate_all_features(data_st,[],feature_set);
+	% estimate features:
+	feat_st=generate_all_features(data_st,[],feature_set);
 ```
 
 # list of features
@@ -49,6 +44,7 @@ in more detail:
 | spectral\_entropy          | spectral entropy: Shannon                                                     | yes |
 | spectral\_diff             | difference between consecutive short-time spectral estimates                  | yes |
 | spectral\_edge\_frequency  | cut-off frequency (fc): 95% of spectral power contained between 0.5 and fc Hz | no  |
+| fd                         | fractal dimension                                                             | yes |
 | amplitude\_total\_power    | time-domain signal: total power                                               | yes |
 | amplitude\_skew            | time-domain signal: skewness                                                  | yes |
 | amplitude\_kurtosis        | time-domain signal: kurtosis                                                  | yes |
@@ -90,7 +86,7 @@ header, type `help <filename.m>` in Matlab.  Directory structure is as follows:
 ```
 with some files of interest:
 ```
-├── quant_feats_parameters.m             # all parameters defined here
+├── qEEGfs_parameters.m                  # all parameters defined here
 ├── all_features_list.m                  # complete list of functions (do not edit)
 └── generate_all_features.m              # main function: generates feature set on EEG
 ```
@@ -142,10 +138,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 1. D O’Reilly, MA Navakatikyan, M Filip, D Greene, & LJ Van Marter (2012). Peak-to-peak
 amplitude in neonatal brain monitoring of premature infants. Clinical Neurophysiology,
-123(11), 2139–2153.
+123(11):2139–2153.
 
 2. MJAM van Putten (2007). The revised brain symmetry index. Clinical Neurophysiology,
-118(11), 2362–2367.
+118(11):2362–2367.
+
+3. T Higuchi (1988). Approach to an irregular time series on the basis of the fractal theory,
+Physica D: Nonlinear Phenomena, 31:277–283.
+
+4. MJ Katz (1988). Fractals and the analysis of waveforms. Computers in Biology and
+Medicine, 18(3):145–156.
+
+5. AV Oppenheim, RW Schafer. Discrete-Time Signal Processing. Prentice-Hall, Englewood
+Cliffs, NJ 07458, 1999.
+
+5. JM O’ Toole, GB Boylan, S Vanhatalo, NJ Stevenson (2016). Estimating functional brain
+maturity in very and extremely preterm neonates using automated analysis of the
+electroencephalogram. Clinical Neurophysiology, 127(8):2910–2918
 
 
 ---

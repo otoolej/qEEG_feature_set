@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-05-04 11:15:35 (otoolej)>
+% last update: Time-stamp: <2016-08-30 16:33:57 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -26,7 +26,7 @@ if(nargin<4 || isempty(params_st)), params_st=[]; end
 DBplot=0;
 
 if(isempty(params_st))
-    quant_feats_parameters;
+    qEEGfs_parameters;
     if(strfind(feat_name,'spectral'))
         params_st=feat_params_st.spectral;
     else
@@ -274,7 +274,7 @@ function [S_stft,Nfreq,f_scale]=gen_STFT(x,L_window,window_type,overlap,Fs)
 [L_hop,L_epoch,win_epoch]=get_epoch_window(overlap,L_window,window_type,Fs);
 
 N=length(x);
-N_epochs=floor( (N-L_epoch)/L_hop );
+N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );
 if(N_epochs<1) N_epochs=1; end
 nw=0:L_epoch-1;
 Nfreq=2^nextpow2(L_epoch);

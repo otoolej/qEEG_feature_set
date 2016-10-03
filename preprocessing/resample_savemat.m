@@ -17,12 +17,12 @@
 % Example:
 %     
 %
-% REQUIRES: edfread_nicolet.m; filter_zerophase.m
+% REQUIRES: user-supplied function to read in raw EEG; filter_zerophase.m
 
 % John M. O' Toole, University College Cork
 % Started: 27-05-2013
 %
-% last update: Time-stamp: <2016-04-29 18:41:13 (otoolej)>
+% last update: Time-stamp: <2016-09-12 14:57:42 (otoolej)>
 %-------------------------------------------------------------------------------
 function [eeg_data,Fs]=resample_savemat(fname,channel_names)
 if(nargin<1 || isempty(fname)), fname=[]; end
@@ -30,13 +30,31 @@ if(nargin<2 || isempty(channel_names)), channel_names=[]; end
 
 
 DBplot=0;
+% EEG_viewer required for DBplot=1 
+% (https://github.com/otoolej/eeg_viewer.git)
 DBplot_test=0;
-SAVE_DATA=1;
+SAVE_DATA=0;
 
 
-quant_feats_parameters;
+qEEGfs_parameters;
 
-eeg_data=[];
+eeg_data=[]; Fs=[];
+
+
+%---------------------------------------------------------------------
+% 0. supply own function to read in raw EEG files (e.g. EDF files)
+%
+% input arguments:  file_name, channel_names
+% output arguments: data (EEG data matrix), ch_labels (channel labels), 
+%                   Fs (sampling frequency)
+% 
+%---------------------------------------------------------------------
+% a) COMMENT:
+fprintf('must supply own function to read in raw EEG; see %s (line 51)\n', ...
+        mfilename); %('fullpath'));
+return;
+% b) UNCOMMENT and REPLACE <edfread_nicolet> with own function to read in raw EEG:
+read_EEG_file=@(file_name,channel_names) edfread_nicolet(file_name,channel_names);
 
 
 %---------------------------------------------------------------------
@@ -48,7 +66,7 @@ if(iscell(fname))
     N_files=length(fname);
     for n=1:N_files
         fname{n}=strip_file_extension(fname{n});
-        [data{n},ch_labels{n},Fs{n}]=edfread_nicolet([EEG_DATA_DIR fname{n} '.edf'], ...
+        [data{n},ch_labels{n},Fs{n}]=read_EEG_file([EEG_DATA_DIR fname{n} '.edf'], ...
                                                      channel_names);
         
         % check if labels and Fs are the same for all files:
@@ -74,7 +92,7 @@ if(iscell(fname))
     end
 else
     fname=strip_file_extension(fname);
-    [data,ch_labels,Fs]=edfread_nicolet([EEG_DATA_DIR fname '.edf'],channel_names);
+    [data,ch_labels,Fs]=read_EEG_file([EEG_DATA_DIR fname '.edf'],channel_names);
     
     if(DBplot_test)
         figure(9); clf; hold all;
@@ -104,7 +122,7 @@ end
 
 
 %---------------------------------------------------------------------
-% 2. PRE-PROCESS (lowpass filter and resample)
+% 3. PRE-PROCESS (lowpass filter and resample)
 %---------------------------------------------------------------------
 % a. filter:
 lp=LP_fc;
@@ -135,7 +153,7 @@ Fs=Fs_new;
 
 
 %---------------------------------------------------------------------
-% 3. SAVE
+% 4. SAVE
 %---------------------------------------------------------------------
 if(SAVE_DATA)
     if(iscell(fname))
@@ -159,7 +177,7 @@ end
 
 
 %---------------------------------------------------------------------
-% 4. PLOT
+% 5. PLOT
 %---------------------------------------------------------------------
 if(DBplot)
   eeg_plotgui_withannos('signals',eeg_data,'Fs',Fs,'channel_labels',ch_labels,...
