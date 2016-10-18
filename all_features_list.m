@@ -3,7 +3,7 @@
 %
 % <<DO NOT EDIT unless adding or removing features>>
 %
-% instead, use 'qEEGfs_parameters.m' to set the feature set or 
+% instead, use 'QUEEN_parameters.m' to set the feature set or 
 % pass as input argument to 'generate_all_features.m'
 %---------------------------------------------------------------------
 FEATURE_SET_ALL={ ...

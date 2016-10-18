@@ -23,7 +23,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-10-2016
 %
-% last update: Time-stamp: <2016-10-03 09:10:28 (otoolej)>
+% last update: Time-stamp: <2016-10-18 10:36:56 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=fd_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -33,7 +33,7 @@ if(nargin<4 || isempty(params_st)), params_st=[]; end
 DBplot=0;
 
 if(isempty(params_st))
-    qEEGfs_parameters;
+    QUEEN_parameters;
     if(strfind(feat_name,'fd'))
         params_st=feat_params_st.fd;
     else
@@ -67,12 +67,7 @@ for n=1:N_freq_bands
         %---------------------------------------------------------------------
         % Katz estimate of fractal dimension [2]
         %---------------------------------------------------------------------
-        x_diff=diff(x);
-        L=sum( abs(x_diff) );
-        d=max( abs(x(1)-x(2:end)) );
-        p=length(x)-1;
-        
-        featx(n)=log10(p)/ (log10(d/L)+log10(p));
+        featx(n)=fd_katz(x);
 
       otherwise
         error(['unknown feature: ' feat_name]);
@@ -121,7 +116,6 @@ for k=k_all
         scale_factor=(N-1)/(floor( (N-m)/k )*k);
         
         L(m)=sum( abs( x(m+ik.*k) - x(m+(ik-1).*k) ) )*(scale_factor/k);
-        
     end
 
     L_avg(inext)=mean(L);
@@ -151,3 +145,28 @@ if(DBplot)
 end
 
     
+
+
+function D=fd_katz(x)
+%---------------------------------------------------------------------
+% Katz estimate in [2]
+%---------------------------------------------------------------------
+N=length(x);
+p=N-1;
+
+% 1. line-length
+for n=1:N-1
+    L(n)=sqrt( 1 + (x(n)-x(n+1)).^2 );
+end
+L=sum(L);
+
+% 2. maximum distance:
+d=zeros(1,p);
+for n=1:N-1
+    d(n)=sqrt( n.^2 + (x(1)-x(n+1)).^2 );
+end
+d=max(d);
+
+
+
+D=log(p)/(log(d/L)+log(p));

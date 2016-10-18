@@ -11,7 +11,7 @@ data_st=gen_test_EEGdata(5*60,64,1);
 
 
 %---------------------------------------------------------------------
-% define feature set (or can define in qEEGfs_parameters.m):
+% define feature set (or can define in QUEEN_parameters.m):
 %---------------------------------------------------------------------
 feature_set={'spectral_relative_power','rEEG_SD', 'connectivity_BSI'};
 	

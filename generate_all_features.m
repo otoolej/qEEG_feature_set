@@ -16,14 +16,14 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-10-03 08:53:57 (otoolej)>
+% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function feat_st=generate_all_features(fname,channel_names,feat_set)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
 if(nargin<3 || isempty(feat_set)), feat_set=[]; end
 
 
-qEEGfs_parameters;
+QUEEN_parameters;
 
 
 %---------------------------------------------------------------------

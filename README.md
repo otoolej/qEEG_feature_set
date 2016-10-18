@@ -1,5 +1,5 @@
-Generic Feature Set for  Neonatal EEG
-=====================================
+QUEEN (QUantitative EEg for Newborns): A Generic Feature Set for Neonatal EEG
+=============================================================================
 
 Matlab code to generate a set of quantitative features from multichannel EEG
 recordings. Features include amplitude measures, spectral measures, and basic connectivity
@@ -44,7 +44,7 @@ in more detail:
 | spectral\_entropy          | spectral entropy: Shannon                                                     | yes |
 | spectral\_diff             | difference between consecutive short-time spectral estimates                  | yes |
 | spectral\_edge\_frequency  | cut-off frequency (fc): 95% of spectral power contained between 0.5 and fc Hz | no  |
-| fd                         | fractal dimension                                                             | yes |
+| FD                         | fractal dimension                                                             | yes |
 | amplitude\_total\_power    | time-domain signal: total power                                               | yes |
 | amplitude\_skew            | time-domain signal: skewness                                                  | yes |
 | amplitude\_kurtosis        | time-domain signal: kurtosis                                                  | yes |

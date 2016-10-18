@@ -16,11 +16,11 @@
 % John M. O' Toole, University College Cork
 % Started: 04-05-2016
 %
-% last update: Time-stamp: <2016-08-30 16:34:14 (otoolej)>
+% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function N=size_feature(feat_name)
 
-qEEGfs_parameters;
+QUEEN_parameters;
 
 feat_group=strsplit(feat_name,'_');
 feat_group=feat_group{1};

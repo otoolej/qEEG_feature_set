@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-08-30 16:33:57 (otoolej)>
+% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -26,7 +26,7 @@ if(nargin<4 || isempty(params_st)), params_st=[]; end
 DBplot=0;
 
 if(isempty(params_st))
-    qEEGfs_parameters;
+    QUEEN_parameters;
     if(strfind(feat_name,'spectral'))
         params_st=feat_params_st.spectral;
     else
