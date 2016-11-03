@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -24,7 +24,7 @@ if(nargin<4 || isempty(data_ref)), data_ref=[]; end
 if(nargin<5 || isempty(ch_refs)), ch_refs=[]; end
 
 
-QUEEN_parameters;
+neural_parameters;
 
 DBverbose=0;
 
@@ -139,7 +139,7 @@ function x=art_per_channel(x,Fs)
 %---------------------------------------------------------------------
 % remove artefacts on a per-channel basis
 %---------------------------------------------------------------------
-QUEEN_parameters;
+neural_parameters;
 
 DBverbose=1;
 

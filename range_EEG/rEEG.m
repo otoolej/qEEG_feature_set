@@ -19,17 +19,17 @@
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:52:00 (otoolej)>
 %-------------------------------------------------------------------------------
-function featx=rEEG(x,Fs,feat_name,params_st)
+function [featx,reeg_all]=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
 if(nargin<3 || isempty(feat_name)), feat_name='rEEG_mean'; end
 if(nargin<4 || isempty(params_st)), params_st=[]; end
-
+reeg_all=[];
 
 
 if(isempty(params_st))
-    QUEEN_parameters;
+    neural_parameters;
     if(strfind(feat_name,'rEEG'))
         params_st=feat_params_st.rEEG;
     else
@@ -129,7 +129,9 @@ for n=1:N_freq_bands
         featx(n)=(B-A)/(A+B);
     end
 
-
+    if(nargout>1)
+        reeg_all(n,:)=reeg;
+    end
 end
 
     

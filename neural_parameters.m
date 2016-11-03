@@ -87,10 +87,10 @@ feat_params_st.spectral.total_freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
 feat_params_st.spectral.SEF=0.95;  % spectral edge frequency
 
 % fractal dimension (FD):
-feat_params_st.fd.method='higuchi'; % method to estimate FD, either 'higuchi' or 'katz'
-feat_params_st.fd.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
-% $$$ feat_params_st.fd.freq_bands=FREQ_BANDS;
-feat_params_st.fd.kmax=6;  % Higuchi method: max. value of k
+feat_params_st.FD.method='higuchi'; % method to estimate FD, either 'higuchi' or 'katz'
+feat_params_st.FD.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
+% $$$ feat_params_st.FD.freq_bands=FREQ_BANDS;
+feat_params_st.FD.kmax=6;  % Higuchi method: max. value of k
 
 
 % for amplitude features:
@@ -114,9 +114,9 @@ feat_params_st.connectivity.PSD_overlap=50; % seconds
 feat_params_st.rEEG.L_window=2; % in seconds
 feat_params_st.rEEG.window_type='rect'; % type of window
 feat_params_st.rEEG.overlap=0; % overlap in percentage
-feat_params_st.rEEG.APPLY_LOG_LINEAR_SCALE=1; % use this scale (either 0 or 1)
-% $$$ feat_params_st.rEEG.freq_bands=[1 20];
-feat_params_st.rEEG.freq_bands=FREQ_BANDS;
+feat_params_st.rEEG.APPLY_LOG_LINEAR_SCALE=0; % use this scale (either 0 or 1)
+feat_params_st.rEEG.freq_bands=[1 20];
+% $$$ feat_params_st.rEEG.freq_bands=FREQ_BANDS;
 
 
 % what to replace artefacts with before filtering?
@@ -128,7 +128,7 @@ FILTER_REPLACE_ARTEFACTS='cubic_interp';
 feat_params_st.amplitude.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
 feat_params_st.rEEG.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
 feat_params_st.connectivity.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
-feat_params_st.fd.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+feat_params_st.FD.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
 
 
 %---------------------------------------------------------------------

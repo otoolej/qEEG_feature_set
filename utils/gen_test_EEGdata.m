@@ -7,6 +7,7 @@
 %     dur:              duration of EEG-like data in seconds (default 300 seconds)
 %     Fs:               sampling frequency
 %     include_bipolar:  include the bipolar montage aswell as the referential  
+%     discont_activity: discontinuous-like activity of preterm EEG (bursts and inter-bursts)
 %
 % Outputs: 
 %     data_st:          structure including EEG data (referential montage), sampling
@@ -19,14 +20,13 @@
 % John M. O' Toole, University College Cork
 % Started: 01-09-2016
 %
-% last update: Time-stamp: <2016-09-12 15:29:54 (otoolej)>
+% last update: Time-stamp: <2016-10-28 17:43:14 (otoolej)>
 %-------------------------------------------------------------------------------
-function data_st=gen_test_EEGdata(dur,Fs,include_bipolar)
+function data_st=gen_test_EEGdata(dur,Fs,include_bipolar,discont_activity)
 if(nargin<1 || isempty(dur)), dur=60*2; end
 if(nargin<2 || isempty(Fs)), Fs=256; end
 if(nargin<3 || isempty(include_bipolar)), include_bipolar=0; end
-
-
+if(nargin<4 || isempty(discont_activity)), discont_activity=0; end
 
 
 N=floor(dur*Fs);
@@ -45,8 +45,38 @@ eeg_data_ref=filter(ones(1,L_ma)./L_ma,1,randn(N_channels,N)')' + ...
     (filter(ones(1,L_ma_noise)./L_ma_noise,1,randn(N_channels,N)')')./100 + ...
     repmat(eeg_common,[N_channels 1]);
 
+if(discont_activity)
+    % if want discontinuous-like activity (burst and inter-bursts):
+    ibursts=randi([1 N],1,fix(dur/100)*Fs);
+    amps=abs(1+rand(1,fix(dur/100)*Fs));
+    
+    bursts=zeros(1,N);
+    bursts(ibursts)=1.*amps;
+    
+    L_win=Fs*2;
+    bursts_smooth=100.*filter(hamming(L_win)./L_win,1,bursts); 
+    
+    eeg_data_ref=10.*bsxfun(@plus,eeg_data_ref,bsxfun(@times,eeg_data_ref, 20.* ...
+                                               bursts_smooth));
+else
+    % slow-duration amplitude modulation:
+    % not included as needs more work:
+% $$$     long_env=randn(1,N);
+% $$$     long_env=long_env-mean(long_env);
+% $$$     long_env=filter(ones(1,100*Fs)./(100*Fs),1,long_env);
+% $$$     long_env=abs(long_env);
+% $$$     long_env=sqrt(.5).*long_env./std(long_env);
+% $$$     long_env=(long_env)+0.2;
+% $$$     figure(2); clf; hold all;
+% $$$     plot(long_env);
+% $$$     eeg_data_ref=bsxfun(@times,eeg_data_ref,long_env);
 
-data_st.eeg_data_ref=eeg_data_ref.*100;
+    
+    eeg_data_ref=eeg_data_ref.*50;
+end
+
+
+data_st.eeg_data_ref=eeg_data_ref;
 data_st.Fs=Fs;
 
 
@@ -71,11 +101,9 @@ if(include_bipolar)
 end
 
 
-
-
 % plot:
-Dbplot=0;
-if(Dbplot)
+DBplot=0;
+if(DBplot)
     
     %---------------------------------------------------------------------
     % EEG viewer installed?

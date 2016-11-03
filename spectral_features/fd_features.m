@@ -23,7 +23,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-10-2016
 %
-% last update: Time-stamp: <2016-10-18 10:36:56 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=fd_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -33,9 +33,9 @@ if(nargin<4 || isempty(params_st)), params_st=[]; end
 DBplot=0;
 
 if(isempty(params_st))
-    QUEEN_parameters;
-    if(strfind(feat_name,'fd'))
-        params_st=feat_params_st.fd;
+    neural_parameters;
+    if(strfind(feat_name,'FD'))
+        params_st=feat_params_st.FD;
     else
         params_st=feat_params_st.(char(feat_name));
     end

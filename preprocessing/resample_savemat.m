@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 27-05-2013
 %
-% last update: Time-stamp: <2016-10-17 09:40:16 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
 %-------------------------------------------------------------------------------
 function [eeg_data,Fs]=resample_savemat(fname,channel_names)
 if(nargin<1 || isempty(fname)), fname=[]; end
@@ -36,7 +36,7 @@ DBplot_test=0;
 SAVE_DATA=0;
 
 
-QUEEN_parameters;
+neural_parameters;
 
 eeg_data=[]; Fs=[];
 

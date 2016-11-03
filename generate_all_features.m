@@ -16,14 +16,17 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
 %-------------------------------------------------------------------------------
-function feat_st=generate_all_features(fname,channel_names,feat_set)
+function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
+                                                  return_feat_epoch)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
 if(nargin<3 || isempty(feat_set)), feat_set=[]; end
+if(nargin<4 || isempty(return_feat_epoch)), return_feat_epoch=0; end
 
 
-QUEEN_parameters;
+
+neural_parameters;
 
 
 %---------------------------------------------------------------------
@@ -44,6 +47,7 @@ else
     eeg_data=d.eeg_data; Fs=d.Fs; ch_labels=d.ch_labels;
 
 end
+feats_per_epochs=[];
 
 
 % select channels:
@@ -94,7 +98,7 @@ for n=1:N_feats
     % SPECTRAL and AMPLITUDE
     % (analysis on a per-channel basis and divide each channel into epochs)
     %---------------------------------------------------------------------
-    if( any(strcmp({'amplitude','spectral','rEEG','fd'},feat_group)) )
+    if( any(strcmp({'amplitude','spectral','rEEG','FD'},feat_group)) )
 
         % B) iterate over channels
         feats_channel=[]; x_epochs=[]; 
@@ -112,7 +116,7 @@ for n=1:N_feats
                         feats_epochs(e,:)=spectral_features(x_epochs(e,:),Fs, ...
                                                             feat_set{n});
                         
-                    elseif(strcmp(feat_group,'fd'))
+                    elseif(strcmp(feat_group,'FD'))
                         feats_epochs(e,:)=fd_features(x_epochs(e,:),Fs, feat_set{n});
                         
                     elseif(strcmp(feat_group,'amplitude'))
@@ -125,6 +129,11 @@ for n=1:N_feats
                     end
                 end
             end
+            % if want to return feature estimated over all epochs:
+            if(return_feat_epoch)
+        	feats_per_epochs{n}(c,:,:)=feats_epochs;
+            end
+            
             % median over all epochs
             feats_channel(c,:)=nanmedian(feats_epochs);
         end

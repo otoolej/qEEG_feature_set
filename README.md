@@ -1,5 +1,5 @@
-QUEEN (QUantitative EEg for Newborns): A Generic Feature Set for Neonatal EEG
-=============================================================================
+NEURAL: A Neonatal EEG Feature Set in Matlab 
+============================================
 
 Matlab code to generate a set of quantitative features from multichannel EEG
 recordings. Features include amplitude measures, spectral measures, and basic connectivity

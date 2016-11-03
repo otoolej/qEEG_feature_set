@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -27,7 +27,7 @@ DBplot=0;
 
 % so far no parameters but maybe later:
 if(isempty(params_st))
-    QUEEN_parameters;
+    neural_parameters;
     if(strfind(feat_name,'amplitude'))
         params_st=feat_params_st.amplitude;
     else

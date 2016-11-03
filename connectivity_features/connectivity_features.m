@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2016-10-17 09:40:17 (otoolej)>
+% last update: Time-stamp: <2016-11-03 15:52:00 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -34,7 +34,7 @@ if(N_channels<2), error('require at least 2 channels'); end
 
 % so far no parameters but maybe later:
 if(isempty(params_st))
-    QUEEN_parameters;
+    neural_parameters;
     if(strfind(feat_name,'connectivity'))
         params_st=feat_params_st.connectivity;
     else
