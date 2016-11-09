@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2016-11-08 18:27:03 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -271,7 +271,7 @@ function [S_stft,Nfreq,f_scale]=gen_STFT(x,L_window,window_type,overlap,Fs)
 %---------------------------------------------------------------------
 % Short-time Fourier transform (magnitude only, i.e. spectrogram):
 %---------------------------------------------------------------------
-[L_hop,L_epoch,win_epoch]=get_epoch_window(overlap,L_window,window_type,Fs);
+[L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs);
 
 N=length(x);
 N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );

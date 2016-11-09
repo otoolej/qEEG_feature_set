@@ -19,7 +19,7 @@
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2016-11-03 15:52:00 (otoolej)>
+% last update: Time-stamp: <2016-11-08 18:27:03 (otoolej)>
 %-------------------------------------------------------------------------------
 function [featx,reeg_all]=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -140,7 +140,7 @@ function reeg=gen_rEEG(x,Fs,win_length,win_overlap,win_type,APPLY_LOG_LINEAR_SCA
 %---------------------------------------------------------------------
 % generate the peak-to-peak measure (rEEG)
 %---------------------------------------------------------------------
-[L_hop,L_epoch,win_epoch]=get_epoch_window(win_overlap,win_length,win_type,Fs);
+[L_hop,L_epoch,win_epoch]=gen_epoch_window(win_overlap,win_length,win_type,Fs);
 
 
 N=length(x);

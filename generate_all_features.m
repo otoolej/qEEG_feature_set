@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2016-11-08 18:27:03 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
@@ -201,7 +201,7 @@ if(nargin<4 || isempty(overlap)), overlap=50; end
 if(nargin<5 || isempty(window_type)), window_type='rect'; end
 
 
-[L_hop,L_epoch,win_epoch]=get_epoch_window(overlap,L_window,window_type,Fs);
+[L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs);
 
 N=length(x);
 N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );

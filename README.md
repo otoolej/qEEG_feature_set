@@ -27,10 +27,10 @@ tweaking.
 	feat_st=generate_all_features(data_st,[],feature_set);
 ```
 
-# list of features
+# quantitative features
 
-Feature set containing amplitude, spectral, connectivity (symmtery/synchrony), and burst
-annotations features.  Amplitude features include range-EEG (D. O’ Reilly et al., 2012;
+The feature set contains amplitude, spectral, connectivity (symmtery/synchrony), and burst
+annotation features.  Amplitude features include range-EEG (D. O’ Reilly et al., 2012;
 see [references](#references)), a clearly-defined alternative to amplitude-integrated EEG
 (aEEG). All features are generated for four different frequency bands (typically 0.5–4,
 4–7, 7–13, and 13–30 Hz), which some exceptions. The following table describes the features
