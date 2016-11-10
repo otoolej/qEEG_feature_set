@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-08 18:27:03 (otoolej)>
+% last update: Time-stamp: <2016-11-10 12:55:25 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -37,6 +37,7 @@ end
 freq_bands=params_st.freq_bands;
 total_freq_bands=params_st.total_freq_bands;
 
+% $$$ keyboard;
 switch feat_name
   case {'spectral_power','spectral_relative_power'}
 
@@ -79,46 +80,42 @@ switch feat_name
         featx=spec_pow;
         
 
-      case {'spectrogram','med-spectrogram'}
+      case {'robust-PSD'}
         %---------------------------------------------------------------------
         % estimate spectral power on short-time FFT and then average
         %---------------------------------------------------------------------
-        [S_stft,Nfreq,f_scale]=gen_STFT(x,params_st.L_window,params_st.window_type,...
-                                        params_st.overlap,Fs);
+        [S_stft,Nfreq,f_scale,win_epoch]=gen_STFT(x,params_st.L_window,params_st.window_type, ...
+                                                  params_st.overlap,Fs);
+
+        pxx=nanmedian(S_stft);
+        N=length(pxx);
         
-        [N_epochs,M]=size(S_stft);
+        % normalise:
+        E_win=sum(abs(win_epoch).^2)./Nfreq;
+        pscale=ones(1,N)+1; pscale([1 end])=1;
+        S_stft=pscale.*(pxx./(Nfreq*E_win*Fs));
 
         if(strcmp(feat_name,'spectral_relative_power'))
             itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
             itotal_bandpass=itotal_bandpass+1;
-            itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>M)=M;  
+            itotal_bandpass(itotal_bandpass<1)=1; itotal_bandpass(itotal_bandpass>N)=N;  
         end
         
-        spec_pow=NaN(N_epochs,size(freq_bands,1));
+        spec_pow=NaN(1,size(freq_bands,1));
         
         for p=1:size(freq_bands,1)
             ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
             ibandpass=ibandpass+1;
-            ibandpass(ibandpass<1)=1; ibandpass(ibandpass>M)=M;    
+            ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
 
-            
-            for k=1:N_epochs
-                pxx=S_stft(k,:);
-                
-                if(strcmp(feat_name,'spectral_relative_power'))
-                    spec_pow(k,p)=sum( pxx(ibandpass) )/sum( pxx(itotal_bandpass) );
-                else
-                    spec_pow(k,p)=sum( pxx(ibandpass) );
-                end
+            if(strcmp(feat_name,'spectral_relative_power'))
+                spec_pow(p)=sum( pxx(ibandpass) )/sum( pxx(itotal_bandpass) );
+            else
+                spec_pow(p)=sum( pxx(ibandpass) );
             end
         end
+        featx=spec_pow;
         
-        if(strcmp(params_st.method,'med-spectrogram'))
-            featx=nanmedian(spec_pow);
-        else
-            featx=nanmean(spec_pow);
-        end
-
     end
     
     
@@ -246,15 +243,14 @@ function [pxx,itotal_bandpass,f_scale,fp]=psd_Welch(x,L_window,window_type,overl
 %---------------------------------------------------------------------
 % generate PSD using the Welch method
 %---------------------------------------------------------------------
-
-% a) PSD estimate (Welch's periodogram):
-win_length=make_odd(L_window*Fs);
-overlap=ceil(win_length*(1-overlap/100));
+[L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs,1);
+overlap=L_epoch-L_hop;
 
 % remove NaNs:
 x(isnan(x))=[];
 
-[pxx,fp]=pwelch(x,win_length,overlap,[],Fs);
+% a) PSD estimate (Welch's periodogram):
+[pxx,fp]=pwelch(x,win_epoch,overlap,[],Fs);
 
 % b) limit to frequency band of interest:
 N=length(pxx);
@@ -267,17 +263,18 @@ itotal_bandpass(itotal_bandpass<1)=1;  itotal_bandpass(itotal_bandpass>N)=N;
 
 
 
-function [S_stft,Nfreq,f_scale]=gen_STFT(x,L_window,window_type,overlap,Fs)
+
+function [S_stft,Nfreq,f_scale,win_epoch]=gen_STFT(x,L_window,window_type,overlap,Fs)
 %---------------------------------------------------------------------
 % Short-time Fourier transform (magnitude only, i.e. spectrogram):
 %---------------------------------------------------------------------
-[L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs);
+[L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs,1);
 
 N=length(x);
 N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );
 if(N_epochs<1) N_epochs=1; end
 nw=0:L_epoch-1;
-Nfreq=2^nextpow2(L_epoch);
+Nfreq=max(256, 2^nextpow2(L_epoch));
 
 %---------------------------------------------------------------------
 % generate short-time FT on all data:

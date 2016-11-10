@@ -4,19 +4,32 @@
 % Syntax: feat_st=generate_all_features(fname,channel_names,feat_set)
 %
 % Inputs: 
-%     fname,channel_names,feat_set - 
+%     fname          - either EEG filename or data structure with EEG 
+%                      e.g. data structure: data_st = gen_test_EEGdata(5*60,64,1); 
+%     channel_names  - channel labels to process (default, process all)
+%                      e.g. {'C3-O1','C4-O2','F3-C3','F4-C4'}
+%     feat_set       - cell of features to compute, 
+%                      e.g. {'spectral_relative_power','rEEG_SD', 'connectivity_BSI'}
 %
 % Outputs: 
-%     feat_st - 
+%     feat_st - structure containing features
 %
 % Example:
-%     
 %
+%       % generate 5 minutes of simulated multichannel EEG data, with 64 Hz sample frequency
+%       data_st=gen_test_EEGdata(5*60,64,1);
+%
+%       % select features to compute:
+%       feature_set={'spectral_relative_power','rEEG_SD', 'connectivity_BSI'};
+%
+%       % generate all features:
+%       feat_st=generate_all_features(data_st,[],feature_set);
+% 
 
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-08 18:27:03 (otoolej)>
+% last update: Time-stamp: <2016-11-10 13:20:42 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
@@ -62,7 +75,7 @@ if(~isempty(channel_names))
     eeg_data=eeg_data(ikeep,:);
     ch_labels=ch_labels(ikeep);
 end
-% $$$ keyboard;
+
 % or remove empty channels:
 irem=[];
 for n=1:length(ch_labels)
@@ -213,5 +226,5 @@ x_epochs=zeros(N_epochs,L_epoch);
 for k=1:N_epochs
     nf=mod(nw+(k-1)*L_hop,N);
     
-    x_epochs(k,:)=x(nf+1).*win_epoch';
+    x_epochs(k,:)=x(nf+1).*win_epoch;
 end

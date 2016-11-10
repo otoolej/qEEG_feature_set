@@ -68,11 +68,10 @@ all_features_list;
 FREQ_BANDS=[0.5 3; 3 8; 8 15; 15 30]; 
 
 
-% three types ways to generate spectrum:
+% 2 ways to generate spectrum:
 % (applies to 'spectral_power' and 'spectral_relative_power' features)
 % 1) PSD: estimate power spectral density (e.g. Welch periodgram)
-% 2) spectogram: frequency marginal of spectrogram
-% 3) med-spectogram: median (instead of mean) of spectrogram 
+% 2) robust-PSD: median (instead of mean) of spectrogram 
 feat_params_st.spectral.method='PSD'; 
 
 

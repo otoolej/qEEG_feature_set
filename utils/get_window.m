@@ -58,11 +58,11 @@ function win=get_win(win_length, win_type, win_param, DFT_WINDOW )
 %--------------------------------------------------------------------------------
 
 switch win_type
- case 'delta'
+ case {'delt', 'delta'}
   win=zeros(win_length,1);
   wh = floor(win_length/2);
   win(wh+1)=1;
- case 'rect'
+ case {'rect' , 'rectangular'}
   win(1:win_length) = 1;
  case {'bart', 'bartlett'}
   win = bartlett( win_length );
@@ -70,14 +70,14 @@ switch win_type
   win = hamming( win_length );
  case {'hann', 'hanning'}
   win = hanning( win_length );
- case 'tukey'
+ case {'tuke', 'tukey' }
   % NOTE: seems to be problem with Octave's (v2.9.12) tukeywin.m for N odd.
   if(isempty(win_param))
     win = tukeywin( win_length );
   else
     win = tukeywin( win_length, win_param );
   end
- case 'gauss'
+ case {'gaus','gauss'}
   if(isempty(win_param))
     win = gausswin( win_length );
   else
