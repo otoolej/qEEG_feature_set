@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2016-11-03 15:52:00 (otoolej)>
+% last update: Time-stamp: <2016-11-17 13:37:34 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -134,7 +134,7 @@ switch feat_name
     
   case 'connectivity_corr'
     %---------------------------------------------------------------------
-    % cross-correlation (Spearmans)
+    % cross-correlation (Pearson)
     %---------------------------------------------------------------------
     N_pairs=size(ipairs,2);
     for n=1:N_freq_bands

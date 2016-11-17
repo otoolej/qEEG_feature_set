@@ -65,7 +65,7 @@ if(~isempty(inans))
         x=replace_start_ends_NaNs_with_zeros(x);
         x=naninterp(x,'linear');
         
-      case 'cubic_interp'
+      case {'cubic_interp','nans'}
         x=replace_start_ends_NaNs_with_zeros(x);
         x=naninterp(x,'pchip');
     end
@@ -75,10 +75,13 @@ end
 
 y=filtfilt(b,a,x);
 
-% $$$ if(~isempty(inans))
-% $$$     y(inans)=NaN;
-% $$$ end
 
+% special case: if NaNs
+if(strcmp(FILTER_REPLACE_ARTEFACTS,'nans'))
+    if(~isempty(inans))
+        y(inans)=NaN;
+    end
+end
 
 if(DB)
     fvtool(b,a,'Fs',Fs); %,'frequencyscale','log');

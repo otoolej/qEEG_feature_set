@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-10 12:55:25 (otoolej)>
+% last update: Time-stamp: <2016-11-17 13:51:43 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -93,7 +93,7 @@ switch feat_name
         % normalise:
         E_win=sum(abs(win_epoch).^2)./Nfreq;
         pscale=ones(1,N)+1; pscale([1 end])=1;
-        S_stft=pscale.*(pxx./(Nfreq*E_win*Fs));
+        pxx=pscale.*(pxx./(Nfreq*E_win*Fs));
 
         if(strcmp(feat_name,'spectral_relative_power'))
             itotal_bandpass=ceil(total_freq_bands(1)*f_scale):floor(total_freq_bands(2)*f_scale);
@@ -269,6 +269,9 @@ function [S_stft,Nfreq,f_scale,win_epoch]=gen_STFT(x,L_window,window_type,overla
 % Short-time Fourier transform (magnitude only, i.e. spectrogram):
 %---------------------------------------------------------------------
 [L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs,1);
+
+% remove NaNs:
+x(isnan(x))=[];
 
 N=length(x);
 N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );

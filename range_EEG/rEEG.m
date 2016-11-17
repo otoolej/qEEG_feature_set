@@ -19,7 +19,7 @@
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2016-11-08 18:27:03 (otoolej)>
+% last update: Time-stamp: <2016-11-17 12:20:23 (otoolej)>
 %-------------------------------------------------------------------------------
 function [featx,reeg_all]=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -63,18 +63,12 @@ for n=1:N_freq_bands
     DBplot=0;
     if(DBplot)
         figure(1); clf; hold all;
-        ttime=0:(N-1); ttime=ttime.*params_st.L_window;
-        plot(ttime,reeg);
-        yt=get(gca,'ytick');
-        ihigh=find(yt>50);
-        if(~isempty(ihigh))
-            yt(ihigh)=exp( yt(ihigh).*(log(50)/50) );
-        end
-        set(gca,'yticklabel',yt);
+        ttime=0:(length(reeg)-1); ttime=ttime.*params_st.L_window;
+        plot_rEEG(ttime,reeg);
         grid on;
     end
 
-
+    
     switch feat_name
       case 'rEEG_mean'
         %---------------------------------------------------------------------
@@ -110,13 +104,13 @@ for n=1:N_freq_bands
         %---------------------------------------------------------------------
         % standard deviation
         %---------------------------------------------------------------------
-        featx(n)=std(reeg);
+        featx(n)=nanstd(reeg);
 
       case 'rEEG_CV'
         %---------------------------------------------------------------------
         % coefficient of variation 
         %---------------------------------------------------------------------
-        featx(n)=std(reeg)/nanmean(reeg);
+        featx(n)=nanstd(reeg)/nanmean(reeg);
 
       case 'rEEG_asymmetry'
         %---------------------------------------------------------------------
@@ -167,4 +161,33 @@ if(APPLY_LOG_LINEAR_SCALE)
     if(~isempty(ihigh))
         reeg(ihigh)=50.*log(reeg(ihigh))./log(50);
     end
+end
+
+
+function plot_rEEG(t1,reeg)
+%---------------------------------------------------------------------
+% plot the linear -log scaled rEEG
+%---------------------------------------------------------------------
+col_reeg={[0.2539 0.4102 0.8789]};
+
+
+% log-linear scale:
+ihigh=find(reeg>50);
+if(~isempty(ihigh))
+    reeg(ihigh)=50.*log(reeg(ihigh))./log(50);
+end
+
+plot(t1,reeg,'color',col_reeg{1});
+xlim([-0.1 t1(end)+0.1]);
+
+
+ytics=[0 25 50 50*log(250)/log(50) 50*log(1000)/log(50)];
+log_ytics_labels={'0','25','50','250','1000'};
+set(gca,'ytick',ytics,'yticklabel',log_ytics_labels);
+ylim([ytics(1) ytics(end)+5]);
+
+
+for n=1:length(ytics)
+    lp=line(xlim,[ytics(n) ytics(n)],'color',[1 1 1].*0.5);
+    uistack(lp,'bottom');
 end

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2016-11-17 12:22:32 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -68,7 +68,7 @@ for n=1:N_freq_bands
         if(strcmp(feat_name,'amplitude_env_mean') || strcmp(feat_name,'amplitude_env'))
             featx(n)=nanmean(env);
         elseif(strcmp(feat_name,'amplitude_env_SD'))
-            featx(n)=std(env);
+            featx(n)=nanstd(env);
         end
         
       case 'amplitude_SD'

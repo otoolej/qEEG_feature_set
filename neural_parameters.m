@@ -122,6 +122,8 @@ feat_params_st.rEEG.freq_bands=[1 20];
 % options: 1) zeros ('zeros') 
 %          2) linear interpolation ('linear_interp')
 %          3) cubic spline interpolation ('cubic_interp')
+%          4) NaN ('nans'): replace with cubic spline before filtering and then NaN's
+%          after filtering
 FILTER_REPLACE_ARTEFACTS='cubic_interp';
 
 feat_params_st.amplitude.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
