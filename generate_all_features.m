@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-10 13:20:42 (otoolej)>
+% last update: Time-stamp: <2016-11-17 15:21:42 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
@@ -151,7 +151,7 @@ for n=1:N_feats
             feats_channel(c,:)=nanmedian(feats_epochs);
         end
         % and median over all channels:
-        feat_st.(char(feat_set{n}))=nanmedian(feats_channel);
+        feat_st.(char(feat_set{n}))=nanmedian(feats_channel,1);
 
     %---------------------------------------------------------------------
     % CONNECTIVITY FEATURES
@@ -196,7 +196,7 @@ for n=1:N_feats
             feats_channel(c,:)=IBI_features(eeg_data(c,:)',Fs,feat_set{n});
         end
         % and median over all channels:
-        feat_st.(char(feat_set{n}))=nanmedian(feats_channel);
+        feat_st.(char(feat_set{n}))=nanmedian(feats_channel,1);
 
 
     end

@@ -3,12 +3,6 @@
 %---------------------------------------------------------------------
 data_st=gen_test_EEGdata(5*60,64,1);
 
-%---------------------------------------------------------------------
-% need to remove artefacts?  If so, use 'remove_artefacts' function
-%---------------------------------------------------------------------
-% $$$ data_st.eeg_data=remove_artefacts(data_st.eeg_data,data_st.ch_labels_bi,data_st.Fs, ...
-% $$$                                   data_st.eeg_data_ref,data_st.ch_labels_ref);
-
 
 %---------------------------------------------------------------------
 % define feature set (or can define in neural_parameters.m):
