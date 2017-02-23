@@ -10,9 +10,11 @@ Fs_new=64; % down-sample to Fs_new (Hz)
 %---------------------------------------------------------------------
 % FILL IN AS APPROPRIATE:
 EEG_DATA_DIR='';
-EEG_DATA_DIR='~/eeg_data/Rhodri_twin_study/';
 EEG_DATA_DIR_MATFILES='';
+
+EEG_DATA_DIR='~/eeg_data/Rhodri_twin_study/';
 EEG_DATA_DIR_MATFILES='~/eeg_data/Rhodri_twin_study/downsampled_matfiles/';
+
 
 
 %---------------------------------------------------------------------
@@ -101,6 +103,12 @@ feat_params_st.amplitude.freq_bands=FREQ_BANDS;
 feat_params_st.connectivity.freq_bands=FREQ_BANDS;
 feat_params_st.connectivity.PSD_window=2; % seconds
 feat_params_st.connectivity.PSD_overlap=50; % seconds
+% find lower coherence limit using surrogate data?
+% (number of iterations required to generate null-hypothesis distribution;
+%  set to 0 to turn off)
+feat_params_st.connectivity.coherence_surr_data=100; 
+% alpha value for null-hypothesis disribution cut-off:
+feat_params_st.connectivity.coherence_surr_alpha=0.05;
 
 
 % for rEEG (range-EEG, similar to aEEG) from [1]
