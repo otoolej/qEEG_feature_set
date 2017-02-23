@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2016-11-17 13:37:34 (otoolej)>
+% last update: Time-stamp: <2017-02-22 12:45:56 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -187,16 +187,50 @@ switch feat_name
         x1(isnan(x1))=[];
         x2(isnan(x2))=[];        
         
-        pxx=pwelch(x1,win_length,overlap,[],Fs);
-        pyy=pwelch(x2,win_length,overlap,[],Fs);        
-        [pxy,fp]=cpsd(x1,x2,win_length,overlap,[],Fs);        
-        
-        coh(p,:)=(abs(pxy).^2)./(pxx.*pyy);
 
+        [coh(p,:),pxx,pyy]=gen_coherence(x1,x2,win_length,overlap,Fs);
+        
+        % if generating a null-hypothesis distribution from surrogate data:
+        if(params_st.coherence_surr_data>0)
+            L_surr=params_st.coherence_surr_data;
+            coh_surr=zeros(L_surr,size(coh,2));
+            
+            % generate surrogate signals:
+            x1_surr=rand_phase(x1,L_surr);
+            x2_surr=rand_phase(x2,L_surr);                
+
+            for m=1:L_surr
+                coh_surr(m,:)=gen_coherence(x1_surr(m,:),x2_surr(m,:),win_length, ...
+                                            overlap,Fs,pxx,pyy);
+            end
+
+            % because am not generating pxx and pyy for every iteration (to save
+            % compution time), then coherence function may not be bounded to [0,1]:
+            coh_surr(coh_surr<0)=0;  coh_surr(coh_surr>1)=1;
+            
+            % estimating frequency-dependent threshold at the p<α level of significance
+            coh_thres=prctile(coh_surr,100*(1-params_st.coherence_surr_alpha));
+        end
+        
+
+        % if using surrogate data, zero anything below the threhold:
+        if(params_st.coherence_surr_data>0)
+            coh(p,coh(p,:)<coh_thres)=0;
+        end
+        
+        
+        
         if(DBplot)
             subplot(2,2,p); hold all; 
+            fp=linspace(0,Fs/2,length(coh(p,:)));
             plot(fp,coh(p,:));
+            if(params_st.coherence_surr_data>0)
+                plot(fp,coh_thres,'linewidth',2,'color','k');
+            end
+            xlim([0 fp(end)]);
         end
+        
+        
         
         N=size(coh,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
         for n=1:N_freq_bands
@@ -287,3 +321,19 @@ switch feat_name
 % $$$     end
 end
 
+
+
+function [c,pxx,pyy]=gen_coherence(x1,x2,win_length,overlap,Fs,pxx,pyy)
+%---------------------------------------------------------------------
+% generate coherence (magnitude only) between x1 and x2
+%---------------------------------------------------------------------
+if(nargin<6 || isempty(pxx)), pxx=[]; end
+
+if(isempty(pxx))
+    pxx=pwelch(x1,win_length,overlap,[],Fs);
+    pyy=pwelch(x2,win_length,overlap,[],Fs);        
+end
+pxy=cpsd(x1,x2,win_length,overlap,[],Fs);        
+
+
+c=(abs(pxy).^2)./(pxx.*pyy);
