@@ -12,10 +12,6 @@ Fs_new=64; % down-sample to Fs_new (Hz)
 EEG_DATA_DIR='';
 EEG_DATA_DIR_MATFILES='';
 
-EEG_DATA_DIR='~/eeg_data/Rhodri_twin_study/';
-EEG_DATA_DIR_MATFILES='~/eeg_data/Rhodri_twin_study/downsampled_matfiles/';
-
-
 
 %---------------------------------------------------------------------
 %% MONTAGE
