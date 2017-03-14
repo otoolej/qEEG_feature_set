@@ -1,15 +1,23 @@
 %-------------------------------------------------------------------------------
 % fd_features: fractal dimension estimates
 %
-% Syntax: featx=fd_features(x,Fs,feat_name,params_st)
+% Syntax: featx=fd_features(x,Fs,params_st)
 %
 % Inputs: 
-%     x,Fs,feat_name,params_st - 
+%     x          - epoch of EEG data (size 1 x N)
+%     Fs         - sampling frequency (in Hz)
+%     params_st  - parameters (as structure); see neural_parameters.m for examples
 %
 % Outputs: 
-%     featx - 
+%     featx  - fractal dimension for each frequency band 
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%
+%     featx=fd_features(x,Fs);
+%
 %     
 %
 % [1] T Higuchi, “Approach to an irregular time series on the basis of the fractal
@@ -19,26 +27,20 @@
 % vol. 18, no. 3, pp. 145–156. 1988
 
 
-
 % John M. O' Toole, University College Cork
 % Started: 03-10-2016
 %
-% last update: Time-stamp: <2017-03-13 16:12:37 (otoolej)>
+% last update: Time-stamp: <2017-03-14 10:45:50 (otoolej)>
 %-------------------------------------------------------------------------------
-function featx=fd_features(x,Fs,feat_name,params_st)
+function featx=fd_features(x,Fs,params_st)
 if(nargin<2), error('need 2 input arguments'); end
-if(nargin<3 || isempty(feat_name)), feat_name='higuchi'; end
-if(nargin<4 || isempty(params_st)), params_st=[]; end
+if(nargin<3 || isempty(params_st)), params_st=[]; end
 
 DBplot=0;
 
 if(isempty(params_st))
     neural_parameters;
-    if(strfind(feat_name,'FD'))
-        params_st=feat_params_st.FD;
-    else
-        params_st=feat_params_st.(char(feat_name));
-    end
+    params_st=feat_params_st.FD;
 end
 
 freq_bands=params_st.freq_bands;

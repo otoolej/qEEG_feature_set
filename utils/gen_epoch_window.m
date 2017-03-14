@@ -5,20 +5,34 @@
 % Syntax: [L_hop,L_epoch,win_epoch]=gen_epoch_window(L_overlap,L_epoch,win_type,Fs)
 %
 % Inputs: 
-%     L_overlap,L_epoch,win_type,Fs - 
+%     L_overlap - precentage overlap 
+%     L_epoch   - epoch size (in seconds)
+%     win_type  - window type, e.g. 'hamm' for Hamming window
+%     Fs        - sampling frequency (in Hz)
 %
 % Outputs: 
-%     [L_hop,L_epoch,win_epoch] - 
+%     L_hop     - hop size (in samples)
+%     L_epoch   - epoch size (in samples)
+%     win_epoch - window, of length L_epoch 
 %
 % Example:
-%     
+%     overlap=50; win_length=2; Fs=64
 %
+%     [L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,win_length,'hamm',Fs);
+%   
+%     fprintf('hop length=%d; epoch length=%d\n',L_hop,L_epoch);
+%     figure(1); clf; 
+%     ttime=(0:(length(win_epoch)-1))./Fs;
+%     plot(ttime,win_epoch);
+
 
 % John M. O' Toole, University College Cork
 % Started: 28-05-2013
+%
+% last update: Time-stamp: <2017-03-14 17:31:08 (otoolej)>
 %-------------------------------------------------------------------------------
 function [L_hop,L_epoch,win_epoch]=gen_epoch_window(L_overlap,L_epoch,win_type,Fs, ...
-                                                  GEN_PSD)
+                                                    GEN_PSD)
 if(nargin<5 || isempty(GEN_PSD)), GEN_PSD=0; end
 
 

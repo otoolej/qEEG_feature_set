@@ -60,10 +60,10 @@ all_features_list;
 
 
 % band-pass filter in this band:
-% $$$ FREQ_BANDS=[0.5 4; 4 7; 7 13; 13 30]; 
+FREQ_BANDS=[0.5 4; 4 7; 7 13; 13 30]; 
 
 % these bands often used for preterm infants (<32 weeks GA):
-FREQ_BANDS=[0.5 3; 3 8; 8 15; 15 30]; 
+% $$$ FREQ_BANDS=[0.5 3; 3 8; 8 15; 15 30]; 
 
 
 % 2 ways to generate spectrum:

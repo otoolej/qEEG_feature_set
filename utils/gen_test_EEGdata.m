@@ -1,7 +1,7 @@
 %-------------------------------------------------------------------------------
 % gen_test_EEGdata: generate EEG-like data as coloured Gaussian noise 
 %
-% Syntax: data_st=gen_test_EEGdata(dur,Fs)
+% Syntax: data_st=gen_test_EEGdata(dur,Fs,include_bipolar,discont_activity)
 %
 % Inputs: 
 %     dur:              duration of EEG-like data in seconds (default 300 seconds)
@@ -14,13 +14,20 @@
 %                       frequency, and channel labels
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
 %     
+%     figure(1); clf; hold all;
+%     ttime=(0:(length(x)-1))./Fs;
+%     plot(ttime,x);
+%     xlabel('time (seconds)'); ylabel('\muV');
 %
 
 % John M. O' Toole, University College Cork
 % Started: 01-09-2016
 %
-% last update: Time-stamp: <2016-10-28 17:43:14 (otoolej)>
+% last update: Time-stamp: <2017-03-14 17:35:14 (otoolej)>
 %-------------------------------------------------------------------------------
 function data_st=gen_test_EEGdata(dur,Fs,include_bipolar,discont_activity)
 if(nargin<1 || isempty(dur)), dur=60*2; end

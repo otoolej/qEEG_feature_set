@@ -4,23 +4,32 @@
 % Syntax: featx=amplitude_features(x,Fs,feat_name,params_st)
 %
 % Inputs: 
-%     x,Fs,feat_name,params_st - 
+%     x          - epoch of EEG data (size 1 x N)
+%     Fs         - sampling frequency (in Hz)
+%     feat_name  - feature type, defaults to 'amplitude_total_power';
+%                  see full list of 'amplitude_' features in all_features_list.m
+%     params_st  - parameters (as structure); 
+%                  see neural_parameters.m for examples
 %
 % Outputs: 
-%     featx - 
+%     featx  - feature at each frequency band 
 %
 % Example:
-%     
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%
+%     featx=amplitude_features(x,Fs,'amplitude_env_mean');
 %
 
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2017-03-13 16:05:27 (otoolej)>
+% last update: Time-stamp: <2017-03-14 10:55:32 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
-if(nargin<3 || isempty(feat_name)), feat_name='envelope'; end
+if(nargin<3 || isempty(feat_name)), feat_name='amplitude_total_power'; end
 if(nargin<4 || isempty(params_st)), params_st=[]; end
 
 DBplot=0;

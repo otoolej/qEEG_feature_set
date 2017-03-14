@@ -4,19 +4,20 @@
 % Syntax: N=size_feature(feat_name)
 %
 % Inputs: 
-%     feat_name - 
+%     feat_name - feature name (e.g. 'spectral_power')
 %
 % Outputs: 
-%     N - 
+%     N - number of frequency bands
 %
 % Example:
-%     
-%
+%     N=size_feature('spectral_power')
+%     fprintf('feature has %d frequency bands\n',N);
+
 
 % John M. O' Toole, University College Cork
 % Started: 04-05-2016
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2017-03-14 16:57:18 (otoolej)>
 %-------------------------------------------------------------------------------
 function N=size_feature(feat_name)
 

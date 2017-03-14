@@ -3,23 +3,29 @@
 % contain NaNs.
 %
 %
-% Syntax: [lens,istart,iend]=len_cont_zeros(x)
+% Syntax: [lens,istart,iend]=len_cont_zeros(x,conts)
 %
 % Inputs: 
 %     x     - binary [0,1] vector
 %     const - which to look for, either 0 (default) or 1
 %
 % Outputs: 
-%     [lens,istart,iend] - 
+%     lens   - array of lengths of segments
+%     istart - indices: start of segments
+%     iend   - indices: end of segments
 %
 % Example:
-%     
+%     u=zeros(1,256);
+%     u(50:130)=1; u(205:240)=1; 
+%      
+%     [lens,istart,iend]=len_cont_zeros(u,1);
 %
+%     fprintf('%d segments of 1''s of length: %s\n',length(lens),num2str(lens));
 
 % John M. O' Toole, University College Cork
 % Started: 25-02-2014
 %
-% last update: Time-stamp: <2014-02-28 18:06:55 (otoolej)>
+% last update: Time-stamp: <2017-03-14 17:46:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function [lens,istart,iend]=len_cont_zeros(x,const)
 if(nargin<2 || isempty(const)), const=0; end

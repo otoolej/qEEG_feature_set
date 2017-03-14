@@ -4,19 +4,33 @@
 % Syntax: [bi_sigs,bi_labels]=set_bi_montage(sigs,channel_names)
 %
 % Inputs: 
-%     sigs,channel_names - 
+%     sigs          - EEG data in referential montage
+%     channel_names - cell of referential channel names
+%                      e.g. {'C3','C4','F3','F4'}
 %
 % Outputs: 
-%     [bi_sigs,bi_labels] - 
+%     bi_sigs   - EEG data in referential montage
+%     bi_labels - cell of bipolar channel names
+%                 e.g. {'C3-O1','C4-O2', 'F3-C3', 'F4-C4'}
 %
 % Example:
-%     
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
 %
+%     x_ref=data_st.eeg_data_ref;
+%     ch_labels_ref=data_st.ch_labels_ref;
+%     BI_MONT={{'F4','C4'},{'F3','C3'},{'C4','T4'},{'C3','T3'},{'C4','Cz'}, ...
+%              {'Cz','C3'},{'C4','O2'},{'C3','O1'}};
+%
+%     [x_bi,ch_labels_bi]=set_bi_montage(x_ref,ch_labels_ref,BI_MONT);
+%
+%     fprintf('bipolar channels: %s\n',strjoin(ch_labels_bi,', '));
+
 
 % John M. O' Toole, University College Cork
 % Started: 05-03-2013
 %
-% last update: Time-stamp: <2016-04-25 16:05:15 (otoolej)>
+% last update: Time-stamp: <2017-03-14 16:18:10 (otoolej)>
 %-------------------------------------------------------------------------------
 function [bi_sigs,bi_labels]=set_bi_montage(sigs,channel_names,bi_mont)
 if(nargin<3), error('requires 3 input arguments.'); end

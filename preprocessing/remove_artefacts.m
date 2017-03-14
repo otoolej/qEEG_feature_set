@@ -1,22 +1,49 @@
 %-------------------------------------------------------------------------------
 % remove_artefacts: simple procedure to remove artefacts
 %
-% Syntax: data=remove_artefacts(data,ch_labels,Fs)
+% Syntax: data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 %
 % Inputs: 
-%     data,ch_labels,Fs - 
+%     data      - EEG data, in bipolar montage; size: N_channels x N
+%     ch_labels - cell of bipolar channel labels, 
+%                 e.g. {'C3-O1','C4-O2', 'F3-C3', 'F4-C4'}
+%     Fs        - sampling frequency (in Hz)
+%     data_ref  - EEG data, in referential  montage; size: (N_channels+1) x N
+%     ch_refs   - cell of referential channel labels, 
+%                 e.g. {'C3','C4','F3','F4'}
 %
 % Outputs: 
-%     data - 
+%     data - EEG data after processing, in bipolar montage, size: N_channels x N
 %
 % Example:
-%     
+%     Fs=256;
+%     data_st=gen_test_EEGdata(2*60,Fs,1);
+%     N=size(data_st.eeg_data_ref,2);
+% 
+%     % simulate artefacts:
+%     % 1. F4 not properly attached:
+%     if3=find(strcmp(data_st.ch_labels_ref,'F3'));
+%     data_st.eeg_data_ref(if3,:)=randn(1,N).*10;
 %
+%     % 2. electrode coupling between C4 and Cz
+%     ic4=find(strcmp(data_st.ch_labels_ref,'C4'));
+%     icz=find(strcmp(data_st.ch_labels_ref,'Cz'));
+%     data_st.eeg_data_ref(icz,:)=data_st.eeg_data_ref(ic4,:)+randn(1,N).*5;
+%
+%     % re-generate bipolar montage:
+%     [data_st.eeg_data,data_st.ch_labels] = ...
+%        set_bi_montage(data_st.eeg_data_ref,data_st.ch_labels_ref, ...
+%                                 data_st.ch_labels_bi);
+%
+%     % remove channels:
+%     eeg_art=remove_artefacts(data_st.eeg_data,data_st.ch_labels,data_st.Fs, ...
+%                         data_st.eeg_data_ref,data_st.ch_labels_ref);
+
 
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2017-03-13 11:10:14 (otoolej)>
+% last update: Time-stamp: <2017-03-14 15:07:51 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end

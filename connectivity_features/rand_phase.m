@@ -12,13 +12,22 @@
 %         (size N_iter x N)
 %
 % Example:
-%     
+%     N=1000; N_iter=500;
+%     x=randn(1,N);
+%     y=rand_phase(x,N_iter);
 %
+%     figure(1); clf; hold all;
+%     subplot(2,1,1);
+%     plot(x);
+%     subplot(2,1,1);
+%     plot(y);
+%
+% 
 
 % John M. O' Toole, University College Cork
 % Started: 24-08-2016
 %
-% last update: Time-stamp: <2017-02-22 10:12:17 (otoolej)>
+% last update: Time-stamp: <2017-03-14 12:42:42 (otoolej)>
 %-------------------------------------------------------------------------------
 function y=rand_phase(x,N_iter)
 if(nargin<2 || isempty(N_iter)), N_iter=1; end

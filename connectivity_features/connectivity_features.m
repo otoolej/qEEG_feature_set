@@ -4,23 +4,42 @@
 % Syntax: featx=connectivity_features(x,Fs,feat_name,params_st)
 %
 % Inputs: 
-%     x,Fs,feat_name,params_st - 
+%     x          - epoch of EEG data (size 1 x N)
+%     Fs         - sampling frequency (in Hz)
+%     feat_name  - feature type, defaults to 'connectivity_BSI';
+%                  see full list of 'connectivity_' features in all_features_list.m
+%     params_st  - parameters (as structure); 
+%                  see neural_parameters.m for examples
 %
 % Outputs: 
-%     featx - 
+%     featx  - feature at each frequency band 
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data;
+%     channel_labels=data_st.ch_labels;
+%
+%     featx=connectivity_features(x,Fs,'connectivity_corr',[],channel_labels);
 %     
+%
+% [1] van Putten, MJAM (2007). The revised brain symmetry index. Clinical Neurophysiology,
+%     118(11), 2362–2367.
+% [2] Prichard D, Theiler J (1994). Generating surrogate data for time series with several
+%     simultaneously measured variables. Physical Review Letters, 1994;73(7):951–954.
+% [3] Faes L, Pinna GD, Porta A, Maestri R, Nollo G (2004). Surrogate data analysis for
+%     assessing the significance of the coherence function. IEEE Transactions on
+%     Biomedical Engineering, 51(7):1156–1166.
 %
 
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2017-03-13 13:45:43 (otoolej)>
+% last update: Time-stamp: <2017-03-14 12:46:25 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
-if(nargin<3 || isempty(feat_name)), feat_name='envelope'; end
+if(nargin<3 || isempty(feat_name)), feat_name='connectivity_BSI'; end
 if(nargin<4 || isempty(params_st)), params_st=[]; end
 if(nargin<5 || isempty(ch_labels)), ch_labels=[]; end
 
@@ -264,35 +283,35 @@ switch feat_name
     % lag of cross-correlation 
     % (NOT FINISHED!! needs more testing)
     %---------------------------------------------------------------------
-    N_pairs=size(ipairs,2);    
-    for n=1:N_freq_bands
-        for p=1:N_channels
-            [x_filt(p,:),inans{p}]=filter_butterworth_withnans(x(p,:),Fs,freq_bands(n,2), ...
-                                                              freq_bands(n,1),5, ...
-                                                              params_st.FILTER_REPLACE_ARTEFACTS);
-        end
-
-        time_max_lag=NaN(1,N_pairs);
-        for p=1:N_pairs
-            all_inans=unique([inans{ipairs(1,p)} inans{ipairs(2,p)}]);
-            
-            x1=x_filt(ipairs(1,p),:);
-            x2=x_filt(ipairs(2,p),:);
-            if(~isempty(all_inans))
-        	x1(all_inans)=[];
-        	x2(all_inans)=[];                
-            end
-        
-        
-            [cc,lag]=xcorr(x1,x2,'biased');
-
-            [~,imax]=max(abs(cc));
-            time_max_lag(p)=lag(imax)/Fs;
-        end
-
-        featx(n)=nanmean(time_max_lag);
-
-    end
+% $$$     N_pairs=size(ipairs,2);    
+% $$$     for n=1:N_freq_bands
+% $$$         for p=1:N_channels
+% $$$             [x_filt(p,:),inans{p}]=filter_butterworth_withnans(x(p,:),Fs,freq_bands(n,2), ...
+% $$$                                                               freq_bands(n,1),5, ...
+% $$$                                                               params_st.FILTER_REPLACE_ARTEFACTS);
+% $$$         end
+% $$$ 
+% $$$         time_max_lag=NaN(1,N_pairs);
+% $$$         for p=1:N_pairs
+% $$$             all_inans=unique([inans{ipairs(1,p)} inans{ipairs(2,p)}]);
+% $$$             
+% $$$             x1=x_filt(ipairs(1,p),:);
+% $$$             x2=x_filt(ipairs(2,p),:);
+% $$$             if(~isempty(all_inans))
+% $$$         	x1(all_inans)=[];
+% $$$         	x2(all_inans)=[];                
+% $$$             end
+% $$$         
+% $$$         
+% $$$             [cc,lag]=xcorr(x1,x2,'biased');
+% $$$ 
+% $$$             [~,imax]=max(abs(cc));
+% $$$             time_max_lag(p)=lag(imax)/Fs;
+% $$$         end
+% $$$ 
+% $$$         featx(n)=nanmean(time_max_lag);
+% $$$ 
+% $$$     end
     
     
   case 'connectivity_asynchrony'

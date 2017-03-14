@@ -3,18 +3,33 @@
 %
 % Syntax: x_filt=filter_zerophase(x,Fs,LP_fc,HP_fc,L_filt)
 %
-% Inputs: 
-%     x,Fs,LP_fc,HP_fc,L_filt - 
+% Inputs:
+%     x      - input signal 
+%     Fs     - sample frequency (Hz)
+%     LP_fc  - lowpass cut off (Hz)
+%     HP_fc  - highpass cut off (Hz)
+%     L_filt - length of filter (in samples)
 %
 % Outputs: 
-%     x_filt - 
+%     y - filtered signal
 %
 % Example:
-%     
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%     LP_fc=20; HP_fc=1;
+%
+%     y=filter_zerophase(x,Fs,LP_fc,HP_fc,501);
+%
+%     figure(1); clf; hold all;
+%     ttime=(0:(length(x)-1))./Fs;
+%     plot(ttime,x); plot(ttime,y);
 %
 
 % John M. O' Toole, University College Cork
 % Started: 08-05-2013
+%
+% last update: Time-stamp: <2017-03-14 16:46:53 (otoolej)>
 %-------------------------------------------------------------------------------
 function x_filt=filter_zerophase(x,Fs,LP_fc,HP_fc,L_filt,win_type,DBplot)
 if(nargin<2 || isempty(Fs)), Fs=1; end
@@ -74,7 +89,6 @@ elseif(~isempty(HP_fc))
 else
     error('need to specify cut-off frequency.');
 end
-
 
   
 % Do the filtering

@@ -2,7 +2,6 @@
 % run this to add paths
 %---------------------------------------------------------------------
 
-
 % what directory is this file in?
 cur_full_path=mfilename('fullpath');
 cur_fname=mfilename();

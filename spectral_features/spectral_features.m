@@ -1,22 +1,32 @@
 %-------------------------------------------------------------------------------
 % gen_spectral_power: spectral power for all frequency bands
 %
-% Syntax: featx=spectral_features(x,Fs)
+% Syntax: featx=spectral_features(x,Fs,feat_name,params_st)
 %
 % Inputs: 
-%     x,Fs - 
+%     x          - epoch of EEG data (size 1 x N)
+%     Fs         - sampling frequency (in Hz)
+%     feat_name  - feature type, defaults to 'spectral_power';
+%                  see full list of 'spectral_' features in all_features_list.m
+%     params_st  - parameters (as structure); 
+%                  see neural_parameters.m for examples
 %
 % Outputs: 
-%     featx - 
+%     featx  - feature at each frequency band 
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%
+%     featx=spectral_features(x,Fs,'spectral_relative_power');
 %     
 %
 
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2017-03-13 16:05:51 (otoolej)>
+% last update: Time-stamp: <2017-03-14 10:51:06 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end

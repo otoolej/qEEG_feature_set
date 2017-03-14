@@ -4,19 +4,33 @@
 % Syntax: featx=IBI_features(x,Fs,feat_name,params_st)
 %
 % Inputs: 
-%     x,Fs,feat_name,params_st - 
+%     x          - epoch of EEG data (size 1 x N)
+%     Fs         - sampling frequency (in Hz)
+%     feat_name  - feature type, defaults to 'IBI_length_max';
+%                  see full list of 'IBI_' features in all_features_list.m
+%     params_st  - parameters (as structure); 
+%                  see neural_parameters.m for examples
 %
 % Outputs: 
-%     featx - 
+%     featx  - IBI features
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%
+%     featx=IBI_features(x,Fs,'IBI_burst_number');
 %     
 %
+% [1] JM O’ Toole, GB Boylan, RO Lloyd, RM Goulding, S Vanhatalo, NJ Stevenson
+% (2017). Detecting Bursts in the EEG of Very and Extremely Premature Infants using a
+% Multi-Feature Approach. under review, 2017.
+
 
 % John M. O' Toole, University College Cork
 % Started: 26-04-2016
 %
-% last update: Time-stamp: <2017-03-13 16:08:44 (otoolej)>
+% last update: Time-stamp: <2017-03-14 13:57:44 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=IBI_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end

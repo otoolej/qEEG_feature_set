@@ -4,17 +4,35 @@
 % Syntax: y=filter_butterworth_withnans(x,Fs,F3db_lowpass,F3db_highpass)
 %
 % Inputs: 
-%     x,Fs,F3db_lowpass,F3db_highpass - 
+%     x             - input signal 
+%     Fs            - sample frequency (Hz)
+%     F3db_lowpass  - 3 dB lowpass cut off (Hz)
+%     F3db_highpass - 3 dB highpass cut off (Hz)
+%     order         - filter order
+%     FILTER_REPLACE_ARTEFACTS - what to do with NaNs?
+%         either replace with 0s ('zeros'), linear interpolation 
+%         ('linear_interp', default), or cubic spline interpolation ('cubic_interp')
 %
 % Outputs: 
-%     y - 
+%     y - filtered signal
 %
 % Example:
-%     
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%     F3db_lowpass=30; F3db_highpass=0.5;
 %
+%     y=filter_butterworth_withnans(x,Fs,F3db_lowpass,F3db_highpass,5);
+%
+%     figure(1); clf; hold all;
+%     ttime=(0:(length(x)-1))./Fs;
+%     plot(ttime,x); plot(ttime,y);
+
 
 % John M. O' Toole, University College Cork
 % Started: 31-10-2013
+%
+% last update: Time-stamp: <2017-03-14 18:27:27 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y,inans]=filter_butterworth_withnans(x,Fs,F3db_lowpass,F3db_highpass, ...
                                        order,FILTER_REPLACE_ARTEFACTS,DB)
@@ -96,7 +114,7 @@ end
 
 function x=replace_start_ends_NaNs_with_zeros(x)
 %---------------------------------------------------------------------
-% replace leading or trailing NaNs with zeros (needed to naninterp.m)
+% replace leading or trailing NaNs with zeros (needed for naninterp.m)
 %---------------------------------------------------------------------
 N=length(x);
 
@@ -109,3 +127,28 @@ end
 if(~isempty(iend) & iend<N)
     x((iend+1):N)=0;
 end
+
+
+function [X,inan]=naninterp(X,method)
+%---------------------------------------------------------------------
+% fill 'gaps' in data (marked by NaN) by interpolating
+%---------------------------------------------------------------------
+if(nargin<2 || isempty(method)), method='linear'; end
+
+inan=find(isnan(X));
+if(isempty(inan))
+  return;
+elseif(length(inan)==1)
+  if(inan>1)
+    X(inan)=X(inan-1);
+  else
+    X(inan)=X(inan+1);
+  end
+else
+    try
+        X(inan)=interp1(find(~isnan(X)), X(~isnan(X)), inan, method);
+    catch
+        error('linear interpolation with NaNs');
+    end
+end
+

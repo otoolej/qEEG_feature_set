@@ -4,22 +4,33 @@
 % Syntax: featx=rEEG(x,Fs,feat_name,params_st)
 %
 % Inputs: 
-%     x,Fs,feat_name,params_st - 
+%     x          - epoch of EEG data (size 1 x N)
+%     Fs         - sampling frequency (in Hz)
+%     feat_name  - feature type, defaults to 'rEEG_mean';
+%                  see full list of 'rEEG_' features in all_features_list.m
+%     params_st  - parameters (as structure); 
+%                  see neural_parameters.m for examples
 %
 % Outputs: 
-%     featx - 
+%     featx  - feature at each frequency band 
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     x=data_st.eeg_data(1,:);
+%
+%     featx=rEEG(x,Fs,'rEEG_width');
+%     
 %     
 %
 % [1] D O’Reilly, MA Navakatikyan, M Filip, D Greene, & LJ Van Marter (2012). Peak-to-peak
 % amplitude in neonatal brain monitoring of premature infants. Clinical Neurophysiology,
-% 123(11), 2139–53.  http://doi.org/10.1016/j.clinph.2012.02.087
+% 123(11), 2139–53.
 
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2017-03-13 16:07:07 (otoolej)>
+% last update: Time-stamp: <2017-03-14 16:21:44 (otoolej)>
 %-------------------------------------------------------------------------------
 function [featx,reeg_all]=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end

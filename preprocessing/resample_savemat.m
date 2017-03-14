@@ -1,28 +1,28 @@
 %-------------------------------------------------------------------------------
-% view_eegdata: a) read in EEG from .edf files
-%               b) remove artefacts
-%               c) band-pass filter
-%               d) downsample
-%               e) save as .mat file
+% resample_savemat: a) read in EEG from .edf files
+%                   b) remove artefacts
+%                   c) band-pass filter
+%                   d) downsample
+%                   e) save as .mat file
 %
 %
-% Syntax: []=view_eegdata(fname,data,Fs)
+% Syntax: [eeg_data,Fs]=resample_savemat(fname,channel_names)
 %
 % Inputs: 
-%     fname,data,Fs - 
+%     fname         - EDF file name
+%     channel_names - cell of channel names to read in; 
 %
 % Outputs: 
-%     [] - 
+%     eeg_data - EEG data in bipolar montage
+%     Fs       - sample frequency (in Hz)
 %
-% Example:
-%     
 %
-% REQUIRES: user-supplied function to read in raw EEG; filter_zerophase.m
+% REQUIRES: user-supplied function to read in raw EEG
 
 % John M. O' Toole, University College Cork
 % Started: 27-05-2013
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2017-03-14 18:05:26 (otoolej)>
 %-------------------------------------------------------------------------------
 function [eeg_data,Fs]=resample_savemat(fname,channel_names)
 if(nargin<1 || isempty(fname)), fname=[]; end
@@ -54,7 +54,7 @@ fprintf('must supply own function to read in raw EEG; see %s (line 51)\n', ...
         mfilename); %('fullpath'));
 return;
 % b) UNCOMMENT and REPLACE <edfread_nicolet> with own function to read in raw EEG:
-read_EEG_file=@(file_name,channel_names) edfread_nicolet(file_name,channel_names);
+% $$$ read_EEG_file=@(file_name,channel_names) edfread_nicolet(file_name,channel_names);
 
 
 %---------------------------------------------------------------------

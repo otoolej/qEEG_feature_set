@@ -4,19 +4,25 @@
 % Syntax: ipairs=channel_hemisphere_pairs(channel_labels)
 %
 % Inputs: 
-%     channel_labels - 
+%     channel_labels - cell of bipolar channel names
+%                      e.g. {'C3-O1','C4-O2', 'F3-C3', 'F4-C4'}
 %
 % Outputs: 
-%     ipairs - 
+%     ipairs - indices of the channel-pairs across hemispheres
+%              e.g. 'C3-O1' is paired with 'C4-O2', 'F3-C3' paired with 'F4-C4'
 %
 % Example:
+%     Fs=64; 
+%     data_st=gen_test_EEGdata(32,Fs,1);
+%     channel_labels=data_st.ch_labels;
 %     
-%
+%     ipairs=channel_hemisphere_pairs(channel_labels);
+%     channel_labels(ipairs)
 
 % John M. O' Toole, University College Cork
 % Started: 20-04-2016
 %
-% last update: Time-stamp: <2016-04-27 10:23:32 (otoolej)>
+% last update: Time-stamp: <2017-03-14 12:39:49 (otoolej)>
 %-------------------------------------------------------------------------------
 function ipairs=channel_hemisphere_pairs(channel_labels)
 
