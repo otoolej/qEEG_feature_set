@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2017-02-22 12:45:56 (otoolej)>
+% last update: Time-stamp: <2017-03-13 13:45:43 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -231,8 +231,8 @@ switch feat_name
         end
         
         
-        
         N=size(coh,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
+        fp=linspace(0,Fs/2,N);        
         for n=1:N_freq_bands
             ibandpass=ceil(freq_bands(n,1)*f_scale):floor(freq_bands(n,2)*f_scale);        
             ibandpass=ibandpass+1;
@@ -319,6 +319,10 @@ switch feat_name
 % $$$         featx(n)=(cc-bsi);
 % $$$         
 % $$$     end
+    
+  otherwise
+    fprintf('unknown feature ''%s''; check spelling\n',feat_name);
+    featx=NaN;
 end
 
 

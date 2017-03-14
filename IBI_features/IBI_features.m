@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 26-04-2016
 %
-% last update: Time-stamp: <2016-05-03 17:21:44 (otoolej)>
+% last update: Time-stamp: <2017-03-13 16:08:44 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=IBI_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -87,7 +87,9 @@ switch feat_name
     lens_anno=len_zeros(burst_anno,1);    
     featx=length(lens_anno);
 
-    
+  otherwise
+    fprintf('unknown feature ''%s''; check spelling\n',feat_name);
+    featx=NaN;
     
 end
 

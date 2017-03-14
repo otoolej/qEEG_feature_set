@@ -23,7 +23,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-10-2016
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2017-03-13 16:12:37 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=fd_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -50,7 +50,6 @@ end
 x_orig=x;
 
 for n=1:N_freq_bands
-    
     if(~isempty(freq_bands))
         x=filter_butterworth_withnans(x_orig,Fs,freq_bands(n,2),freq_bands(n,1),5, ...
                                       params_st.FILTER_REPLACE_ARTEFACTS);
@@ -61,7 +60,7 @@ for n=1:N_freq_bands
         %---------------------------------------------------------------------
         % Higuchi estimate of fractal dimension [1]
         %---------------------------------------------------------------------
-        featx(n)=fd_higuchi(x,params_st.kmax);
+        featx(n)=fd_higuchi(x,params_st.qmax);
 
       case 'katz'
         %---------------------------------------------------------------------
@@ -70,7 +69,8 @@ for n=1:N_freq_bands
         featx(n)=fd_katz(x);
 
       otherwise
-        error(['unknown feature: ' feat_name]);
+        fprintf('unknown feature ''%s''; check spelling\n',feat_name);
+        featx=NaN;
     end
 
 end

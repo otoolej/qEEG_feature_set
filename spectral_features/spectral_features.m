@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-17 13:51:43 (otoolej)>
+% last update: Time-stamp: <2017-03-13 16:05:51 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -232,7 +232,9 @@ switch feat_name
         plot(fp,10*log10(pxx));
     end
     
-    
+  otherwise
+    fprintf('unknown feature ''%s''; check spelling\n',feat_name);
+    featx=NaN;
 end
 
 

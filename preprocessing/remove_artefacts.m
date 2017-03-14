@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2016-11-03 15:51:59 (otoolej)>
+% last update: Time-stamp: <2017-03-13 11:10:14 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -75,7 +75,7 @@ N_channels=length(ichannels);
 % 1. look for electrode coupling:
 %---------------------------------------------------------------------
 if(N_channels>4)
-    [ileft,iright]=channel_left_or_right(ch_labels(ichannels));
+    [ileft,iright]=channel_hemispheres(ch_labels(ichannels));
 
     if(length(ileft)>1 && length(iright)>1)
         x_means=zeros(1,N_channels);

@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2016-11-17 12:22:32 (otoolej)>
+% last update: Time-stamp: <2017-03-13 16:05:27 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -90,7 +90,8 @@ for n=1:N_freq_bands
         featx(n)=kurtosis(x);
         
       otherwise
-        error(['unknown feature: ' feat_name]);
+        fprintf('unknown feature ''%s''; check spelling\n',feat_name);
+        featx=NaN;
     end
     
     

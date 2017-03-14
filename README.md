@@ -16,24 +16,35 @@ tweaking.
 
 # use 
 
+First, add paths using the `load_curdir` function:
+```matlab
+  >> load_curdir;
+```
+
+As an example, generate simulated EEG and calculate relative spectral power, standard
+deviation of range-EEG, and brain symmetry index:
 ```matlab
 	% generate EEG-like data (coloured Gaussian noise)
 	data_st=gen_test_EEGdata(5*60,64,1);
 
-	% define feature set (or can define in qEEGfs_parameters.m):
+	% define feature set (or can define in neural_parameters.m):
 	feature_set={'spectral_relative_power','rEEG_SD', 'connectivity_BSI'};
 	
 	% estimate features:
 	feat_st=generate_all_features(data_st,[],feature_set);
 ```
 
+See the `demo/` directory for further examples. All parameters are set the file
+`neural_parameters.m`.
+
+
 # quantitative features
 
-The feature set contains amplitude, spectral, connectivity (symmtery/synchrony), and burst
-annotation features.  Amplitude features include range-EEG (D. O’ Reilly et al., 2012;
+The feature set contains amplitude, spectral, connectivity, and burst annotation features.
+Amplitude features include range-EEG (D. O’ Reilly et al., 2012;
 see [references](#references)), a clearly-defined alternative to amplitude-integrated EEG
 (aEEG). All features are generated for four different frequency bands (typically 0.5–4,
-4–7, 7–13, and 13–30 Hz), which some exceptions. The following table describes the features
+4–7, 7–13, and 13–30 Hz), with some exceptions. The following table describes the features
 in more detail:
 
 | feature name               | description                                                                   | FB  |
@@ -46,6 +57,7 @@ in more detail:
 | spectral\_edge\_frequency  | cut-off frequency (fc): 95% of spectral power contained between 0.5 and fc Hz | no  |
 | FD                         | fractal dimension                                                             | yes |
 | amplitude\_total\_power    | time-domain signal: total power                                               | yes |
+| amplitude\_SD              | time-domain signal: standard deviation                                                  | yes |
 | amplitude\_skew            | time-domain signal: skewness                                                  | yes |
 | amplitude\_kurtosis        | time-domain signal: kurtosis                                                  | yes |
 | amplitude\_env\_mean       | envelope: mean value                                                          | yes |
@@ -86,7 +98,7 @@ header, type `help <filename.m>` in Matlab.  Directory structure is as follows:
 ```
 with some files of interest:
 ```
-├── qEEGfs_parameters.m                  # all parameters defined here
+├── neural_parameters.m                  # all parameters defined here
 ├── all_features_list.m                  # complete list of functions (do not edit)
 └── generate_all_features.m              # main function: generates feature set on EEG
 ```
@@ -156,6 +168,9 @@ Cliffs, NJ 07458, 1999.
 maturity in very and extremely preterm neonates using automated analysis of the
 electroencephalogram. Clinical Neurophysiology, 127(8):2910–2918
 
+6. JM O’ Toole, GB Boylan, RO Lloyd, RM Goulding, S Vanhatalo, NJ Stevenson
+    (2017). Detecting Bursts in the EEG of Very and Extremely Premature Infants using a
+    Multi-Feature Approach. under review, 2017.
 
 ---
 

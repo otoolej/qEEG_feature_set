@@ -1,5 +1,5 @@
 %-------------------------------------------------------------------------------
-% channel_left_or_right: return indices for left and right channels
+% channel_hemispheres: return indices for left and right channels
 %
 % Syntax: [ileft,iright]=channel_hemispheres(channels_all)
 %
@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 02-03-2015
 %
-% last update: Time-stamp: <2016-04-05 13:06:12 (otoolej)>
+% last update: Time-stamp: <2017-03-13 11:10:30 (otoolej)>
 %-------------------------------------------------------------------------------
 function [ileft,iright]=channel_hemispheres(channels_all)
 

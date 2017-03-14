@@ -19,7 +19,7 @@
 % John M. O' Toole, University College Cork
 % Started: 19-04-2016
 %
-% last update: Time-stamp: <2016-11-17 12:20:23 (otoolej)>
+% last update: Time-stamp: <2017-03-13 16:07:07 (otoolej)>
 %-------------------------------------------------------------------------------
 function [featx,reeg_all]=rEEG(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -116,11 +116,13 @@ for n=1:N_freq_bands
         %---------------------------------------------------------------------
         % coefficient of variation 
         %---------------------------------------------------------------------
-% $$$         line(xlim,[1 1].*nanmedian(reeg),'color','r','linewidth',2);
-        
         A=nanmedian(reeg) - prctile(reeg,5);
         B=prctile(reeg,95) - nanmedian(reeg);
         featx(n)=(B-A)/(A+B);
+        
+      otherwise
+        fprintf('unknown feature ''%s''; check spelling\n',feat_name);
+        featx=NaN;
     end
 
     if(nargout>1)
