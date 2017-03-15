@@ -42,6 +42,21 @@ ART_ELEC_CHECK=1;   % minimum length required for electrode check (in seconds)
 ART_REF_LOW_CORR=0.15; % if mean correlation coefficent across referential channels  
                        % is < this value then remove
 
+
+% what to replace artefacts with before filtering?
+% options: 1) zeros ('zeros') 
+%          2) linear interpolation ('linear_interp')
+%          3) cubic spline interpolation ('cubic_interp')
+%          4) NaN ('nans'): replace with cubic spline before filtering and then NaN's
+%          after filtering
+FILTER_REPLACE_ARTEFACTS='cubic_interp';
+
+feat_params_st.amplitude.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+feat_params_st.rEEG.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+feat_params_st.connectivity.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+feat_params_st.FD.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+
+
 %---------------------------------------------------------------------
 %% FEATURES
 %---------------------------------------------------------------------
@@ -65,13 +80,14 @@ FREQ_BANDS=[0.5 4; 4 7; 7 13; 13 30];
 % these bands often used for preterm infants (<32 weeks GA):
 % $$$ FREQ_BANDS=[0.5 3; 3 8; 8 15; 15 30]; 
 
-
+%---------------------------------------------------------------------
+% A. spectral features
+%---------------------------------------------------------------------
 % 2 ways to generate spectrum:
 % (applies to 'spectral_power' and 'spectral_relative_power' features)
 % 1) PSD: estimate power spectral density (e.g. Welch periodgram)
 % 2) robust-PSD: median (instead of mean) of spectrogram 
 feat_params_st.spectral.method='PSD'; 
-
 
 % length of time-domain analysis window and overlap:
 % (applies to 'spectral_power','spectral_relative_power',
@@ -89,23 +105,11 @@ feat_params_st.FD.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
 % $$$ feat_params_st.FD.freq_bands=FREQ_BANDS;
 feat_params_st.FD.qmax=6;  % Higuchi method: max. value of k
 
-
-% for amplitude features:
+%---------------------------------------------------------------------
+% B. amplitude features
+%---------------------------------------------------------------------
 % $$$ feat_params_st.amplitude.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
 feat_params_st.amplitude.freq_bands=FREQ_BANDS;
-
-% for connectivity features:
-% feat_params_st.connectivity.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
-feat_params_st.connectivity.freq_bands=FREQ_BANDS;
-feat_params_st.connectivity.PSD_window=2; % seconds
-feat_params_st.connectivity.PSD_overlap=50; % seconds
-% find lower coherence limit using surrogate data?
-% (number of iterations required to generate null-hypothesis distribution;
-%  set to 0 to turn off)
-feat_params_st.connectivity.coherence_surr_data=100; 
-% alpha value for null-hypothesis disribution cut-off:
-feat_params_st.connectivity.coherence_surr_alpha=0.05;
-
 
 % for rEEG (range-EEG, similar to aEEG) from [1]
 %
@@ -121,23 +125,23 @@ feat_params_st.rEEG.APPLY_LOG_LINEAR_SCALE=0; % use this scale (either 0 or 1)
 feat_params_st.rEEG.freq_bands=FREQ_BANDS;
 
 
-
-% what to replace artefacts with before filtering?
-% options: 1) zeros ('zeros') 
-%          2) linear interpolation ('linear_interp')
-%          3) cubic spline interpolation ('cubic_interp')
-%          4) NaN ('nans'): replace with cubic spline before filtering and then NaN's
-%          after filtering
-FILTER_REPLACE_ARTEFACTS='cubic_interp';
-
-feat_params_st.amplitude.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
-feat_params_st.rEEG.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
-feat_params_st.connectivity.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
-feat_params_st.FD.FILTER_REPLACE_ARTEFACTS=FILTER_REPLACE_ARTEFACTS;
+%---------------------------------------------------------------------
+% C. connectivity features
+%---------------------------------------------------------------------
+% feat_params_st.connectivity.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
+feat_params_st.connectivity.freq_bands=FREQ_BANDS;
+feat_params_st.connectivity.PSD_window=2; % seconds
+feat_params_st.connectivity.PSD_overlap=50; % seconds
+% find lower coherence limit using surrogate data?
+% (number of iterations required to generate null-hypothesis distribution;
+%  set to 0 to turn off)
+feat_params_st.connectivity.coherence_surr_data=100; 
+% alpha value for null-hypothesis disribution cut-off:
+feat_params_st.connectivity.coherence_surr_alpha=0.05;
 
 
 %---------------------------------------------------------------------
-% SHORT-TIME ANALYSIS on EEG
+%% SHORT-TIME ANALYSIS on EEG
 %---------------------------------------------------------------------
 EPOCH_LENGTH=64;  % seconds
 EPOCH_OVERLAP=50; % percent

@@ -26,7 +26,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2017-03-14 10:51:06 (otoolej)>
+% last update: Time-stamp: <2017-03-15 15:55:35 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end

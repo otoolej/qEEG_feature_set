@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2016-11-17 15:21:42 (otoolej)>
+% last update: Time-stamp: <2017-03-15 10:06:13 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
@@ -130,7 +130,7 @@ for n=1:N_feats
                                                             feat_set{n});
                         
                     elseif(strcmp(feat_group,'FD'))
-                        feats_epochs(e,:)=fd_features(x_epochs(e,:),Fs, feat_set{n});
+                        feats_epochs(e,:)=fd_features(x_epochs(e,:),Fs);
                         
                     elseif(strcmp(feat_group,'amplitude'))
                         feats_epochs(e,:)=amplitude_features(x_epochs(e,:),Fs, ...
