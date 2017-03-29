@@ -26,7 +26,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2017-03-28 10:22:19 (otoolej)>
+% last update: Time-stamp: <2017-03-29 12:15:44 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -75,7 +75,12 @@ switch feat_name
         spec_pow=NaN(1,size(freq_bands,1));
 
         for p=1:size(freq_bands,1)
-            ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
+            if(p==1)
+                istart=ceil(freq_bands(p,1)*f_scale);
+            else
+                istart=ibandpass(end)-1;
+            end
+            ibandpass=istart:floor(freq_bands(p,2)*f_scale);        
             ibandpass=ibandpass+1;
             ibandpass(ibandpass<1)=1; ibandpass(ibandpass>Nh)=Nh;    
             
@@ -99,9 +104,14 @@ switch feat_name
     % for each frequency band:
     N_freq_bands=size(freq_bands,1);
     featx=NaN(1,N_freq_bands);
+    N=length(pxx);    
     for p=1:N_freq_bands
-        N=length(pxx);
-        ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
+        if(p==1)
+            istart=ceil(freq_bands(p,1)*f_scale);
+        else
+            istart=ibandpass(end)-1;
+        end
+        ibandpass=istart:floor(freq_bands(p,2)*f_scale);        
         ibandpass=ibandpass+1;
         ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
         
@@ -120,9 +130,14 @@ switch feat_name
     % for each frequency band:
     N_freq_bands=size(freq_bands,1);
     featx=NaN(1,N_freq_bands);
+    N=length(pxx);    
     for p=1:N_freq_bands
-        N=length(pxx);
-        ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
+        if(p==1)
+            istart=ceil(freq_bands(p,1)*f_scale);
+        else
+            istart=ibandpass(end)-1;
+        end
+        ibandpass=istart:floor(freq_bands(p,2)*f_scale);        
         ibandpass=ibandpass+1;
         ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
 
@@ -145,7 +160,12 @@ switch feat_name
     N_freq_bands=size(freq_bands,1);
     featx=NaN(1,N_freq_bands);
     for p=1:N_freq_bands
-        ibandpass=ceil(freq_bands(p,1)*f_scale):floor(freq_bands(p,2)*f_scale);        
+        if(p==1)
+            istart=ceil(freq_bands(p,1)*f_scale);
+        else
+            istart=ibandpass(end)-1;
+        end
+        ibandpass=istart:floor(freq_bands(p,2)*f_scale);        
         ibandpass=ibandpass+1;
         ibandpass(ibandpass<1)=1; ibandpass(ibandpass>M)=M;    
 

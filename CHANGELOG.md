@@ -1,9 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file. Project started
-2016-04-01 (April fool's day) but this log only started 2017-03-16, after version
-0.2.2. More details can be found in the git logs.
+2016-04-01 but this log started 2017-03-16, after version 0.2.2. More details can be found
+in the git logs.
 
 ## unreleased
+### Changed 
+### Removed
+### Fixed
+### Added
+
+## [0.3.0] - 2017-03-29
 ### Changed 
 - absolute and relative spectral power ('spectral\_power' and 'spectral\_relative\_power')
   now using periodogram (rectangular window) instead of Welch's power-spectral-density
@@ -16,10 +22,15 @@ All notable changes to this project will be documented in this file. Project sta
 
 ### Fixed
 - coherence function broken
+- split of frequency bands for spectral and connectivity features when length of PSD is
+  odd
 
 ### Added
 - documentation to file headers
 - this CHANGELOG.md!
+- option to select PSD estimate for spectral features: either Welch PSD, robust-PSD
+  (modified Welch PSD), or periodogram
+- coherence function can use either PSD or robust-PSD 
 
 ## [0.2.2] - 2017-03-09
 ### Added

@@ -35,7 +35,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2017-03-29 09:26:29 (otoolej)>
+% last update: Time-stamp: <2017-03-29 14:52:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -44,7 +44,7 @@ if(nargin<4 || isempty(params_st)), params_st=[]; end
 if(nargin<5 || isempty(ch_labels)), ch_labels=[]; end
 
 
-DBplot=1;
+DBplot=0;
 
 
 [N_channels,N]=size(x);
@@ -83,7 +83,7 @@ switch feat_name
     %---------------------------------------------------------------------
     % brain sysmetry index (revised version, Van Putten, 2007)
     %
-    % van Putten, M. J. A. M. (2007). The revised brain symmetry index. Clinical
+    % van Putten, MJAM (2007). The revised brain symmetry index. Clinical
     % Neurophysiology, 118(11), 2362–2367. http://doi.org/10.1016/j.clinph.2007.07.019
     %---------------------------------------------------------------------
 
@@ -92,11 +92,10 @@ switch feat_name
         x_epoch=x(k,:);
         x_epoch(isnan(x_epoch))=[];
         
-        params_st.method='PSD';
-        X(k,:)=gen_spectrum(x_epoch,Fs,params_st,1);
+        [X(k,:),~,f_scale,~,fp]=gen_spectrum(x_epoch,Fs,params_st,1);
     end
 
-    N=size(X,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
+    N=size(X,2); %Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
 
     if(length(ileft)>1)
         X_left=nanmean(X(ipairs(1,:),:),1);
@@ -108,24 +107,27 @@ switch feat_name
     
         
     if(DBplot)
-        fpp=linspace(0,Fs/2,N);
-        fp=fpp;
         set_figure(1); clf; hold all;
         subplot(321); hold all;
-        plot(fpp,10*log10(X(ileft,:)'))
+        plot(fp,10*log10(X(ileft,:)'))
         subplot(322); hold all;
-        plot(fpp,10*log10(X(iright,:)'))
+        plot(fp,10*log10(X(iright,:)'))
         subplot(3,2,3:4); hold all;
-        plot(fpp,10*log10(X_left'));
-        plot(fpp,10*log10(X_right'));
+        plot(fp,10*log10(X_left'));
+        plot(fp,10*log10(X_right'));
         subplot(3,2,5:6); hold all;
-        plot(fpp,(abs( (X_left - X_right)./(X_left + X_right) )));
-        disp('--- paused; hit key to continue ---'); pause;
+        plot(fp,(abs( (X_left - X_right)./(X_left + X_right) )));
     end
 
     
     for n=1:N_freq_bands
-        ibandpass=ceil(freq_bands(n,1)*f_scale):floor(freq_bands(n,2)*f_scale);        
+        if(n==1)
+            istart=ceil(freq_bands(n,1)*f_scale);
+        else
+            istart=ibandpass(end)-1;
+        end
+        
+        ibandpass=istart:floor(freq_bands(n,2)*f_scale);        
         ibandpass=ibandpass+1;
         ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
         
@@ -148,8 +150,8 @@ switch feat_name
     % PSD and x-PSD parameters
     N_pairs=size(ipairs,2);
 
-    DBplot=1;    
-    if(DBplot), figure(1); clf; hold all;  end
+    DBplot=0;    
+    if(DBplot), set_figure(1); clf; hold all;  end
     
     
     featx_pairs=NaN(N_freq_bands,N_pairs);
@@ -159,14 +161,7 @@ switch feat_name
         x1(isnan(x1))=[];
         x2(isnan(x2))=[];        
         
-        [coh(p,:),pxx,pyy,pxy]=gen_coherence(x1,x2,Fs,params_st);        
-        
-        set_figure(3); clf; hold all;
-        plot(10*log10(pxx)); plot(10*log10(pyy)); plot(10*log10(coh(p,:)));
-        plot(plot(log10(abs(pxy).^2)));
-        keyboard;
-        disp('--- paused; hit key to continue ---'); pause;
-
+        [coh(p,:),pxx,pyy,f_scale,fp]=gen_coherence(x1,x2,Fs,params_st);        
         
         % if generating a null-hypothesis distribution from surrogate data:
         if(params_st.coherence_surr_data>0)
@@ -182,26 +177,23 @@ switch feat_name
                                             pxx,pyy);
             end
 
-            % because are not generating pxx and pyy for every iteration (to save
-            % compution time), then coherence function may not be bounded to [0,1]:
-            coh_surr(coh_surr<0)=0;  coh_surr(coh_surr>1)=1;
             
             % estimating frequency-dependent threshold at the p<α level of significance
             coh_thres=prctile(coh_surr,100*(1-params_st.coherence_surr_alpha));
         end
-        dispVars(L_surr,median(coh_thres));
 
         % if using surrogate data, zero anything below the threhold:
         if(params_st.coherence_surr_data>0)
             coh(p,coh(p,:)<coh_thres)=0;
         end
         
+        % if using robust-PSD, coherence function may not be bounded to [0,1]
+        % to force to [0,1], set there:
+% $$$         coh(p,coh(p,:)>1)=1;
         
         
         if(DBplot)
-            set_figure(1);
             subplot(2,2,p); hold all; 
-            fp=linspace(0,Fs/2,length(coh(p,:)));
             plot(fp,coh(p,:));
             if(params_st.coherence_surr_data>0)
                 plot(fp,coh_thres,'linewidth',2,'color','k');
@@ -210,10 +202,14 @@ switch feat_name
         end
         
         
-        N=size(coh,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
-        fp=linspace(0,Fs/2,N);        
+        N=size(coh,2);
         for n=1:N_freq_bands
-            ibandpass=ceil(freq_bands(n,1)*f_scale):floor(freq_bands(n,2)*f_scale);        
+            if(n==1)
+                istart=ceil(freq_bands(n,1)*f_scale);
+            else
+                istart=ibandpass(end)-1;
+            end
+            ibandpass=istart:floor(freq_bands(n,2)*f_scale);        
             ibandpass=ibandpass+1;
             ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
             
@@ -339,7 +335,7 @@ end
 
 
 
-function [c,pxx,pyy,pxy]=gen_coherence(x,y,Fs,param_st,pxx,pyy)
+function [c,pxx,pyy,f_scale,fp]=gen_coherence(x,y,Fs,param_st,pxx,pyy)
 %---------------------------------------------------------------------
 % generate coherence (magnitude only) between x and y
 %---------------------------------------------------------------------
@@ -349,7 +345,7 @@ if(isempty(pxx))
     pxx=gen_spectrum(x,Fs,param_st);
     pyy=gen_spectrum(y,Fs,param_st);
 end
-pxy=gen_cross_spectrum(x,y,Fs,param_st);
+[pxy,~,f_scale,fp]=gen_cross_spectrum(x,y,Fs,param_st);
 
 c=(abs(pxy).^2)./(pxx.*pyy);
 

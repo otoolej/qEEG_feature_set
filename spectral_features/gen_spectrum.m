@@ -45,7 +45,7 @@
 % John M. O' Toole, University College Cork
 % Started: 16-03-2017
 %
-% last update: Time-stamp: <2017-03-28 17:50:27 (otoolej)>
+% last update: Time-stamp: <2017-03-29 11:35:39 (otoolej)>
 %-------------------------------------------------------------------------------
 function [pxx,itotal_bandpass,f_scale,Nfreq,fp]=gen_spectrum(x,Fs,param_st,SCALE_PSD)
 if(nargin<4 || isempty(SCALE_PSD)), SCALE_PSD=0; end
@@ -122,7 +122,6 @@ if(SCALE_PSD)
     end
     pxx=pxx.*pscale;
 end
-
 
 
 N=length(pxx);
