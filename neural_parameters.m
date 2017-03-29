@@ -83,10 +83,11 @@ FREQ_BANDS=[0.5 4; 4 7; 7 13; 13 30];
 %---------------------------------------------------------------------
 % A. spectral features
 %---------------------------------------------------------------------
-% 2 ways to generate spectrum:
-% (applies to 'spectral_power' and 'spectral_relative_power' features)
+% how to estimate the spectrum for 'spectral_flatness', 'spectral_entropy',
+% spectral_edge_frequency features:
 % 1) PSD: estimate power spectral density (e.g. Welch periodgram)
 % 2) robust-PSD: median (instead of mean) of spectrogram 
+% 3) periodogram: magnitude of the discrete Fourier transform
 feat_params_st.spectral.method='PSD'; 
 
 % length of time-domain analysis window and overlap:
@@ -98,6 +99,8 @@ feat_params_st.spectral.overlap=50; % overlap in percentage
 feat_params_st.spectral.freq_bands=FREQ_BANDS;
 feat_params_st.spectral.total_freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
 feat_params_st.spectral.SEF=0.95;  % spectral edge frequency
+
+
 
 % fractal dimension (FD):
 feat_params_st.FD.method='higuchi'; % method to estimate FD, either 'higuchi' or 'katz'
@@ -128,10 +131,15 @@ feat_params_st.rEEG.freq_bands=FREQ_BANDS;
 %---------------------------------------------------------------------
 % C. connectivity features
 %---------------------------------------------------------------------
-% feat_params_st.connectivity.freq_bands=[FREQ_BANDS(1) FREQ_BANDS(end)];
+% how to estimate the cross spectrum for the coherence function:
+% 1) PSD: estimate power spectral density (e.g. Welch periodgram)
+% 2) robust-PSD: median (instead of mean) of spectrogram 
+feat_params_st.connectivity.method='PSD'; 
+
 feat_params_st.connectivity.freq_bands=FREQ_BANDS;
-feat_params_st.connectivity.PSD_window=2; % seconds
-feat_params_st.connectivity.PSD_overlap=50; % seconds
+feat_params_st.connectivity.L_window=2; % PSD window in seconds
+feat_params_st.connectivity.overlap=50; % PSD window percentage overlap
+feat_params_st.connectivity.window_type='hamm'; % PSD window type
 % find lower coherence limit using surrogate data?
 % (number of iterations required to generate null-hypothesis distribution;
 %  set to 0 to turn off)

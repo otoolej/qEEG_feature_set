@@ -35,7 +35,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2017-03-14 12:46:25 (otoolej)>
+% last update: Time-stamp: <2017-03-29 14:52:17 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -78,40 +78,28 @@ elseif(N_channels==2)
 end
 
     
-
 switch feat_name
   case 'connectivity_BSI'
     %---------------------------------------------------------------------
     % brain sysmetry index (revised version, Van Putten, 2007)
     %
-    % van Putten, M. J. A. M. (2007). The revised brain symmetry index. Clinical
+    % van Putten, MJAM (2007). The revised brain symmetry index. Clinical
     % Neurophysiology, 118(11), 2362–2367. http://doi.org/10.1016/j.clinph.2007.07.019
     %---------------------------------------------------------------------
 
     % a) PSD estimate (Welch's periodogram):
-    win_length=make_odd(params_st.PSD_window*Fs);
-    overlap=ceil(win_length*(1-params_st.PSD_overlap/100));
-
-    % assuming just two pairs corresponding to left/right:
-    N_pxx=floor(max([256 2^nextpow2(win_length)])/2)+1;
-    N_channels=size(x,1);
-    X=NaN(N_channels,N_pxx);
-    X_left=NaN(1,N_pxx); X_right=NaN(1,N_pxx);    
-    
     for k=1:N_channels
         x_epoch=x(k,:);
         x_epoch(isnan(x_epoch))=[];
         
-        if(length(x_epoch)>=win_length)
-            [X(k,:),fp]=pwelch(x_epoch,win_length,overlap,[],Fs);
-        end
+        [X(k,:),~,f_scale,~,fp]=gen_spectrum(x_epoch,Fs,params_st,1);
     end
 
-    N=size(X,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
+    N=size(X,2); %Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
 
     if(length(ileft)>1)
-        X_left=nanmean(X(ipairs(1,:),:),1).*N_pxx;
-        X_right=nanmean(X(ipairs(2,:),:),1).*N_pxx;            
+        X_left=nanmean(X(ipairs(1,:),:),1);
+        X_right=nanmean(X(ipairs(2,:),:),1);            
     else
         X_left=X(ileft,:);
         X_right=X(iright,:);            
@@ -119,24 +107,27 @@ switch feat_name
     
         
     if(DBplot)
-        fpp=fp;
-        figure(1); clf; hold all;
+        set_figure(1); clf; hold all;
         subplot(321); hold all;
-        plot(fpp,10*log10(X(ileft,:)'))
+        plot(fp,10*log10(X(ileft,:)'))
         subplot(322); hold all;
-        plot(fpp,10*log10(X(iright,:)'))
+        plot(fp,10*log10(X(iright,:)'))
         subplot(3,2,3:4); hold all;
-        plot(fpp,10*log10(X_left'));
-        plot(fpp,10*log10(X_right'));
+        plot(fp,10*log10(X_left'));
+        plot(fp,10*log10(X_right'));
         subplot(3,2,5:6); hold all;
-        plot(fpp,(abs( (X_left - X_right)./(X_left + X_right) )));
-        disp('--- paused; hit key to continue ---'); pause;
+        plot(fp,(abs( (X_left - X_right)./(X_left + X_right) )));
     end
 
     
-    
     for n=1:N_freq_bands
-        ibandpass=ceil(freq_bands(n,1)*f_scale):floor(freq_bands(n,2)*f_scale);        
+        if(n==1)
+            istart=ceil(freq_bands(n,1)*f_scale);
+        else
+            istart=ibandpass(end)-1;
+        end
+        
+        ibandpass=istart:floor(freq_bands(n,2)*f_scale);        
         ibandpass=ibandpass+1;
         ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
         
@@ -149,6 +140,98 @@ switch feat_name
             line([1 1].*fp(ibandpass(end)),ylim,'color','k');        
         end
     end
+
+    
+  case {'connectivity_coh_mean','connectivity_coh_max','connectivity_coh_freqmax'}
+    %---------------------------------------------------------------------
+    % coherence (using Welch's PSD)
+    %---------------------------------------------------------------------
+
+    % PSD and x-PSD parameters
+    N_pairs=size(ipairs,2);
+
+    DBplot=0;    
+    if(DBplot), set_figure(1); clf; hold all;  end
+    
+    
+    featx_pairs=NaN(N_freq_bands,N_pairs);
+    for p=1:N_pairs        
+        x1=x(ipairs(1,p),:);
+        x2=x(ipairs(2,p),:);
+        x1(isnan(x1))=[];
+        x2(isnan(x2))=[];        
+        
+        [coh(p,:),pxx,pyy,f_scale,fp]=gen_coherence(x1,x2,Fs,params_st);        
+        
+        % if generating a null-hypothesis distribution from surrogate data:
+        if(params_st.coherence_surr_data>0)
+            L_surr=params_st.coherence_surr_data;
+            coh_surr=zeros(L_surr,size(coh,2));
+            
+            % generate surrogate signals:
+            x1_surr=rand_phase(x1,L_surr);
+            x2_surr=rand_phase(x2,L_surr);                
+
+            for m=1:L_surr
+                coh_surr(m,:)=gen_coherence(x1_surr(m,:),x2_surr(m,:),Fs,params_st, ...
+                                            pxx,pyy);
+            end
+
+            
+            % estimating frequency-dependent threshold at the p<α level of significance
+            coh_thres=prctile(coh_surr,100*(1-params_st.coherence_surr_alpha));
+        end
+
+        % if using surrogate data, zero anything below the threhold:
+        if(params_st.coherence_surr_data>0)
+            coh(p,coh(p,:)<coh_thres)=0;
+        end
+        
+        % if using robust-PSD, coherence function may not be bounded to [0,1]
+        % to force to [0,1], set there:
+% $$$         coh(p,coh(p,:)>1)=1;
+        
+        
+        if(DBplot)
+            subplot(2,2,p); hold all; 
+            plot(fp,coh(p,:));
+            if(params_st.coherence_surr_data>0)
+                plot(fp,coh_thres,'linewidth',2,'color','k');
+            end
+            xlim([0 fp(end)]);
+        end
+        
+        
+        N=size(coh,2);
+        for n=1:N_freq_bands
+            if(n==1)
+                istart=ceil(freq_bands(n,1)*f_scale);
+            else
+                istart=ibandpass(end)-1;
+            end
+            ibandpass=istart:floor(freq_bands(n,2)*f_scale);        
+            ibandpass=ibandpass+1;
+            ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
+            
+            if(strcmp(feat_name,'connectivity_coh_mean'))
+                featx_pairs(n,p)=nanmean(coh(p,ibandpass));
+            elseif(strcmp(feat_name,'connectivity_coh_max'))
+                featx_pairs(n,p)=max(coh(p,ibandpass));
+            elseif(strcmp(feat_name,'connectivity_coh_freqmax'))
+                [~,imax]=max(coh(p,ibandpass));
+                featx_pairs(n,p)=fp(ibandpass(imax));
+            end
+            
+            if(DBplot)
+                line([1 1].*fp(ibandpass(1)),ylim,'color','k');
+                line([1 1].*fp(ibandpass(end)),ylim,'color','k');        
+            end
+        end
+    end
+    
+    % median value across channel pairs:
+    featx=nanmedian(featx_pairs,2);
+    
     
     
   case 'connectivity_corr'
@@ -182,100 +265,6 @@ switch feat_name
         featx(n)=nanmedian(cc_pairs);
     end
 
-    
-  case {'connectivity_coh_mean','connectivity_coh_max','connectivity_coh_freqmax'}
-    %---------------------------------------------------------------------
-    % coherence (using Welch's PSD)
-    %---------------------------------------------------------------------
-
-    % PSD and x-PSD parameters
-    win_length=make_odd(params_st.PSD_window*Fs);
-    overlap=ceil(win_length*(1-params_st.PSD_overlap/100));
-    
-    N_pairs=size(ipairs,2);
-
-    DBplot=0;    
-    if(DBplot)
-        figure(1); clf; hold all;    
-    end
-    
-    featx_pairs=NaN(N_freq_bands,N_pairs);
-    for p=1:N_pairs        
-        x1=x(ipairs(1,p),:);
-        x2=x(ipairs(2,p),:);
-        x1(isnan(x1))=[];
-        x2(isnan(x2))=[];        
-        
-
-        [coh(p,:),pxx,pyy]=gen_coherence(x1,x2,win_length,overlap,Fs);
-        
-        % if generating a null-hypothesis distribution from surrogate data:
-        if(params_st.coherence_surr_data>0)
-            L_surr=params_st.coherence_surr_data;
-            coh_surr=zeros(L_surr,size(coh,2));
-            
-            % generate surrogate signals:
-            x1_surr=rand_phase(x1,L_surr);
-            x2_surr=rand_phase(x2,L_surr);                
-
-            for m=1:L_surr
-                coh_surr(m,:)=gen_coherence(x1_surr(m,:),x2_surr(m,:),win_length, ...
-                                            overlap,Fs,pxx,pyy);
-            end
-
-            % because am not generating pxx and pyy for every iteration (to save
-            % compution time), then coherence function may not be bounded to [0,1]:
-            coh_surr(coh_surr<0)=0;  coh_surr(coh_surr>1)=1;
-            
-            % estimating frequency-dependent threshold at the p<α level of significance
-            coh_thres=prctile(coh_surr,100*(1-params_st.coherence_surr_alpha));
-        end
-        
-
-        % if using surrogate data, zero anything below the threhold:
-        if(params_st.coherence_surr_data>0)
-            coh(p,coh(p,:)<coh_thres)=0;
-        end
-        
-        
-        
-        if(DBplot)
-            subplot(2,2,p); hold all; 
-            fp=linspace(0,Fs/2,length(coh(p,:)));
-            plot(fp,coh(p,:));
-            if(params_st.coherence_surr_data>0)
-                plot(fp,coh_thres,'linewidth',2,'color','k');
-            end
-            xlim([0 fp(end)]);
-        end
-        
-        
-        N=size(coh,2); Nfreq=2*(N-1); f_scale=(Nfreq/Fs);
-        fp=linspace(0,Fs/2,N);        
-        for n=1:N_freq_bands
-            ibandpass=ceil(freq_bands(n,1)*f_scale):floor(freq_bands(n,2)*f_scale);        
-            ibandpass=ibandpass+1;
-            ibandpass(ibandpass<1)=1; ibandpass(ibandpass>N)=N;    
-            
-            if(strcmp(feat_name,'connectivity_coh_mean'))
-                featx_pairs(n,p)=nanmean(coh(p,ibandpass));
-            elseif(strcmp(feat_name,'connectivity_coh_max'))
-                featx_pairs(n,p)=max(coh(p,ibandpass));
-            elseif(strcmp(feat_name,'connectivity_coh_freqmax'))
-                [~,imax]=max(coh(p,ibandpass));
-                featx_pairs(n,p)=fp(ibandpass(imax));
-            end
-            
-            if(DBplot)
-                line([1 1].*fp(ibandpass(1)),ylim,'color','k');
-                line([1 1].*fp(ibandpass(end)),ylim,'color','k');        
-            end
-        end
-    end
-    
-    % median value across channel pairs:
-    featx=nanmedian(featx_pairs,2);
-    
     
 
   case 'connectivity_lag_corr'
@@ -346,17 +335,18 @@ end
 
 
 
-function [c,pxx,pyy]=gen_coherence(x1,x2,win_length,overlap,Fs,pxx,pyy)
+function [c,pxx,pyy,f_scale,fp]=gen_coherence(x,y,Fs,param_st,pxx,pyy)
 %---------------------------------------------------------------------
-% generate coherence (magnitude only) between x1 and x2
+% generate coherence (magnitude only) between x and y
 %---------------------------------------------------------------------
-if(nargin<6 || isempty(pxx)), pxx=[]; end
+if(nargin<5 || isempty(pxx)), pxx=[]; end
 
 if(isempty(pxx))
-    pxx=pwelch(x1,win_length,overlap,[],Fs);
-    pyy=pwelch(x2,win_length,overlap,[],Fs);        
+    pxx=gen_spectrum(x,Fs,param_st);
+    pyy=gen_spectrum(y,Fs,param_st);
 end
-pxy=cpsd(x1,x2,win_length,overlap,[],Fs);        
-
+[pxy,~,f_scale,fp]=gen_cross_spectrum(x,y,Fs,param_st);
 
 c=(abs(pxy).^2)./(pxx.*pyy);
+
+

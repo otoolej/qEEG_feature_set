@@ -6,7 +6,7 @@ recordings. Features include amplitude measures, spectral measures, and basic co
 measures (across hemisphere's only). Also, for preterm EEG (assuming gestational age < 32
 weeks), will generate features from bursts annotations (e.g. maximum inter-burst
 interval). Burst annotations require a separate package, also available on
-[github](http://otoolej.github.io/code/burst_detector/).
+[github](https://github.com/otoolej/burst_detector).
 
 # requirements:
 Matlab (R2013 or newer,
@@ -16,7 +16,7 @@ tweaking.
 
 # use 
 
-First, add paths using the `load_curdir` function:
+Set paths in Matlab, or do so using the `load_curdir` function:
 ```matlab
   >> load_curdir;
 ```
@@ -57,7 +57,7 @@ in more detail:
 | spectral\_edge\_frequency  | cut-off frequency (fc): 95% of spectral power contained between 0.5 and fc Hz | no  |
 | FD                         | fractal dimension                                                             | yes |
 | amplitude\_total\_power    | time-domain signal: total power                                               | yes |
-| amplitude\_SD              | time-domain signal: standard deviation                                                  | yes |
+| amplitude\_SD              | time-domain signal: standard deviation                                        | yes |
 | amplitude\_skew            | time-domain signal: skewness                                                  | yes |
 | amplitude\_kurtosis        | time-domain signal: kurtosis                                                  | yes |
 | amplitude\_env\_mean       | envelope: mean value                                                          | yes |
@@ -107,8 +107,8 @@ with some files of interest:
 
 # test computer setup
 - hardware:  Intel(R) Xeon(R) CPU E5-1603 0 @ 2.80GHz; 8GB memory.
-- operating system: Ubuntu GNU/Linux x86_64 distribution (Wily Werewolf, 15.10), with Linux
-  kernel 4.2.0-35-generic 
+- operating system: Ubuntu GNU/Linux x86_64 distribution (Yakkey Yak, 16.10), with Linux
+  kernel 4.8.0-41-generic 
 - software: Matlab (R2013a)
 
 ---
@@ -181,9 +181,9 @@ John M. O' Toole
 Neonatal Brain Research Group,  
 Irish Centre for Fetal and Neonatal Translational Research (INFANT),  
 Department of Paediatrics and Child Health,  
+Room 2.19 Paediatrics Bld, Cork University Hospital, 
 University College Cork,  
-Western Gateway Building, Room 2.17,  
-Cork, Ireland
+Ireland
 
 - email: j.otoole AT ieee.org
 - web: http://otoolej.github.io/
