@@ -25,7 +25,7 @@
 % John M. O' Toole, University College Cork
 % Started: 12-04-2016
 %
-% last update: Time-stamp: <2017-03-14 10:55:32 (otoolej)>
+% last update: Time-stamp: <2017-03-16 10:51:16 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=amplitude_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end

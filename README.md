@@ -6,7 +6,7 @@ recordings. Features include amplitude measures, spectral measures, and basic co
 measures (across hemisphere's only). Also, for preterm EEG (assuming gestational age < 32
 weeks), will generate features from bursts annotations (e.g. maximum inter-burst
 interval). Burst annotations require a separate package, also available on
-[github](http://otoolej.github.io/code/burst_detector/).
+[github](https://github.com/otoolej/burst_detector).
 
 # requirements:
 Matlab (R2013 or newer,
@@ -16,7 +16,7 @@ tweaking.
 
 # use 
 
-First, add paths using the `load_curdir` function:
+Set paths in Matlab, or do so using the `load_curdir` function:
 ```matlab
   >> load_curdir;
 ```

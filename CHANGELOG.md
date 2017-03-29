@@ -1,0 +1,33 @@
+# Change Log
+All notable changes to this project will be documented in this file. Project started
+2016-04-01 (April fool's day) but this log only started 2017-03-16, after version
+0.2.2. More details can be found in the git logs.
+
+## unreleased
+### Changed 
+- absolute and relative spectral power ('spectral\_power' and 'spectral\_relative\_power')
+  now using periodogram (rectangular window) instead of Welch's power-spectral-density
+  (PSD) estimate.
+- all spectral estimates (PSD, robust-PSD, and periodogram) now used FFT length equal to
+  window length (previously was in 2^n form, and at least >=256), i.e. no zero-padding.
+  
+### Removed
+- PSD option for absolute and relative spectral power removed (replaced with periodogram).
+
+### Fixed
+- coherence function broken
+
+### Added
+- documentation to file headers
+- this CHANGELOG.md!
+
+## [0.2.2] - 2017-03-09
+### Added
+- surrogate data approach with coherence function
+- NaN option to 'FILTER\_REPLACE\_ARTEFACTS'
+- missing 'get\_window.m' and 'make\_odd.m' function
+- now using semantic versioning (see http://semver.org/)
+
+### Fixed
+- scaling factor for robust-PSD
+
