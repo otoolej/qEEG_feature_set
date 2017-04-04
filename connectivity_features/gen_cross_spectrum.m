@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-03-2017
 %
-% last update: Time-stamp: <2017-03-29 10:06:37 (otoolej)>
+% last update: Time-stamp: <2017-03-30 11:47:43 (otoolej)>
 %-------------------------------------------------------------------------------
 function [pxy,Nfreq,f_scale,fp]=gen_cross_spectrum(x,y,Fs,param_st)
 
@@ -54,7 +54,7 @@ switch lower(spec_method)
     pxy=nanmedian(S_xy)';
     
   otherwise
-    fprintf('unknown spectral method ''%s''; check spelling\n',spec_method);
+    fprintf('unknown cross-spectral method ''%s''; check spelling\n',spec_method);
     pxy=NaN; f_scale=NaN; fp=NaN;
 end
 

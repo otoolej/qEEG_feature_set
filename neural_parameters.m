@@ -134,6 +134,8 @@ feat_params_st.rEEG.freq_bands=FREQ_BANDS;
 % how to estimate the cross spectrum for the coherence function:
 % 1) PSD: estimate power spectral density (e.g. Welch periodgram)
 % 2) robust-PSD: median (instead of mean) of spectrogram 
+% 3) periodogram: magnitude of the discrete Fourier transform
+% [NOTE: periodogram cannot be used for coherence function]
 feat_params_st.connectivity.method='PSD'; 
 
 feat_params_st.connectivity.freq_bands=FREQ_BANDS;

@@ -7,6 +7,7 @@ in the git logs.
 ### Changed 
 ### Removed
 ### Fixed
+- avoid failing if only 1 channel for connectivity features (return NaN instead)
 ### Added
 
 ## [0.3.0] - 2017-03-29

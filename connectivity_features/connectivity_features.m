@@ -35,7 +35,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2017-03-29 14:52:17 (otoolej)>
+% last update: Time-stamp: <2017-03-31 10:09:30 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -48,7 +48,11 @@ DBplot=0;
 
 
 [N_channels,N]=size(x);
-if(N_channels<2), error('require at least 2 channels'); end
+if(N_channels<2)
+    featx=NaN;
+    warning('requires at least 2 channels'); 
+    return;
+end
 
 
 % so far no parameters but maybe later:
