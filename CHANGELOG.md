@@ -3,12 +3,20 @@ All notable changes to this project will be documented in this file. Project sta
 2016-04-01 but this log started 2017-03-16, after version 0.2.2. More details can be found
 in the git logs.
 
-## unreleased
+
+## [0.3.1] - 2017-04-07
 ### Changed 
+- bandpass filter changed from 0.5-40 Hz to 0.1-40 Hz before removing large-amplitude
+  artefacts
+
 ### Removed
+- bandpass filtering (0.5-40 Hz) on EEG prior to removing artefacts (constant values or
+  sudden jumps in amplitude)
+
 ### Fixed
 - avoid failing if only 1 channel for connectivity features (return NaN instead)
 ### Added
+
 
 ## [0.3.0] - 2017-03-29
 ### Changed 
@@ -17,7 +25,7 @@ in the git logs.
   (PSD) estimate.
 - all spectral estimates (PSD, robust-PSD, and periodogram) now used FFT length equal to
   window length (previously was in 2^n form, and at least >=256), i.e. no zero-padding.
-  
+
 ### Removed
 - PSD option for absolute and relative spectral power removed (replaced with periodogram).
 
@@ -32,6 +40,7 @@ in the git logs.
 - option to select PSD estimate for spectral features: either Welch PSD, robust-PSD
   (modified Welch PSD), or periodogram
 - coherence function can use either PSD or robust-PSD 
+
 
 ## [0.2.2] - 2017-03-09
 ### Added

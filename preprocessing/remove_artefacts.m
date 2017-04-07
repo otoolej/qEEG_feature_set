@@ -43,7 +43,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2017-03-14 15:07:51 (otoolej)>
+% last update: Time-stamp: <2017-04-07 15:48:19 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -101,6 +101,7 @@ N_channels=length(ichannels);
 %---------------------------------------------------------------------
 % 1. look for electrode coupling:
 %---------------------------------------------------------------------
+A=[];
 if(N_channels>4)
     [ileft,iright]=channel_hemispheres(ch_labels(ichannels));
 
@@ -139,7 +140,7 @@ if(N_channels>4)
     end
 end
 
-if(DBverbose),  print_table(A); end
+if(DBverbose && ~isempty(A)),  print_table(A); end
 
 
 
@@ -196,7 +197,7 @@ if(any(irem==1) && DBverbose)
 end
 
 x_nofilt=x;
-[x,inans]=filter_butterworth_withnans(x,Fs,40,0.5,5);
+[x_filt,inans]=filter_butterworth_withnans(x,Fs,40,0.1,5);
 
 
 %---------------------------------------------------------------------
@@ -205,7 +206,7 @@ x_nofilt=x;
 art_coll=ART_TIME_COLLAR*Fs;
 irem=zeros(1,N);    
 
-x_hilbert=abs( hilbert(x) );    
+x_hilbert=abs( hilbert(x_filt) );    
 
 thres_upper=ART_HIGH_VOLT;
 ihigh=find(x_hilbert>thres_upper);
@@ -218,7 +219,7 @@ if(~isempty(ihigh))
 end
 x(irem==1)=NaN;
 if(any(irem==1) && DBverbose)
-    fprintf('length of high-amplitude artefacts: %.2f\n', ...
+    fprintf('length of high-amplitude artefacts: %.2f%%\n', ...
             100*length(find(irem==1))/length(x));
 end
 
