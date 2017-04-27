@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. Project sta
 in the git logs.
 
 
+## unreleased
+### Changed 
+### Removed
+### Fixed
+### Added
+
+
 ## [0.3.1] - 2017-04-07
 ### Changed 
 - bandpass filter changed from 0.5-40 Hz to 0.1-40 Hz before removing large-amplitude

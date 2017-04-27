@@ -6,7 +6,12 @@ recordings. Features include amplitude measures, spectral measures, and basic co
 measures (across hemisphere's only). Also, for preterm EEG (assuming gestational age < 32
 weeks), will generate features from bursts annotations (e.g. maximum inter-burst
 interval). Burst annotations require a separate package, also available on
-[github](https://github.com/otoolej/burst_detector).
+[github](https://github.com/otoolej/burst_detector). 
+
+Full details of the methods can be found in: `JM O’Toole and GB Boylan (2017). NEURAL:
+quantitative features for newborn EEG using Matlab. ArXiv e-prints, arXiv:1704.05694`
+available at https://arxiv.org/abs/1704.05694.
+
 
 # requirements:
 Matlab (R2013 or newer,
@@ -148,30 +153,33 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # references
 
-1. D O’Reilly, MA Navakatikyan, M Filip, D Greene, & LJ Van Marter (2012). Peak-to-peak
+1. JM O’Toole and GB Boylan (2017). NEURAL: quantitative features for newborn EEG using
+Matlab. ArXiv e-prints, arXiv:[1704.05694](https://arxiv.org/abs/1704.05694).
+
+2. D O’Reilly, MA Navakatikyan, M Filip, D Greene, & LJ Van Marter (2012). Peak-to-peak
 amplitude in neonatal brain monitoring of premature infants. Clinical Neurophysiology,
 123(11):2139–2153.
 
-2. MJAM van Putten (2007). The revised brain symmetry index. Clinical Neurophysiology,
+3. MJAM van Putten (2007). The revised brain symmetry index. Clinical Neurophysiology,
 118(11):2362–2367.
 
-3. T Higuchi (1988). Approach to an irregular time series on the basis of the fractal theory,
+4. T Higuchi (1988). Approach to an irregular time series on the basis of the fractal theory,
 Physica D: Nonlinear Phenomena, 31:277–283.
 
-4. MJ Katz (1988). Fractals and the analysis of waveforms. Computers in Biology and
+5. MJ Katz (1988). Fractals and the analysis of waveforms. Computers in Biology and
 Medicine, 18(3):145–156.
 
-5. AV Oppenheim, RW Schafer. Discrete-Time Signal Processing. Prentice-Hall, Englewood
+6. AV Oppenheim, RW Schafer. Discrete-Time Signal Processing. Prentice-Hall, Englewood
 Cliffs, NJ 07458, 1999.
 
-5. JM O’ Toole, GB Boylan, S Vanhatalo, NJ Stevenson (2016). Estimating functional brain
+7. JM O’ Toole, GB Boylan, S Vanhatalo, NJ Stevenson (2016). Estimating functional brain
 maturity in very and extremely preterm neonates using automated analysis of the
 electroencephalogram. Clinical Neurophysiology, 127(8):2910–2918
 
-6. JM O’ Toole, GB Boylan, RO Lloyd, RM Goulding, S Vanhatalo, NJ Stevenson
+8. JM O’ Toole, GB Boylan, RO Lloyd, RM Goulding, S Vanhatalo, NJ Stevenson
     (2017). Detecting Bursts in the EEG of Very and Extremely Premature Infants using a
-    Multi-Feature Approach. Medical Engineering and Physics, in press, 2017. 
-	[DOI:10.1016/j.medengphy.2017.04.003](https://dx.doi.org/10.1016/j.medengphy.2017.04.003)
+    Multi-Feature Approach. Medical Engineering and
+    Physics. [DOI:10.1016/j.medengphy.2017.04.003](https://dx.doi.org/10.1016/j.medengphy.2017.04.003)
 
 ---
 
