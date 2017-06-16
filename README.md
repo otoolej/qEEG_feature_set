@@ -179,8 +179,8 @@ electroencephalogram. Clinical Neurophysiology, 127(8):2910–2918
 8. JM O’ Toole, GB Boylan, RO Lloyd, RM Goulding, S Vanhatalo, NJ Stevenson
     (2017). Detecting Bursts in the EEG of Very and Extremely Premature Infants using a
     Multi-Feature Approach. Medical Engineering and
-    Physics. [DOI:10.1016/j.medengphy.2017.04.003](https://dx.doi.org/10.1016/j.medengphy.2017.04.003)
-
+    Physics, vol. 45, pp. 42-50, 2017. 
+	[DOI:10.1016/j.medengphy.2017.04.003](https://dx.doi.org/10.1016/j.medengphy.2017.04.003)
 ---
 
 # contact

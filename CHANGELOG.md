@@ -11,6 +11,19 @@ in the git logs.
 ### Added
 
 
+## [0.3.2] - 2017-06-16
+### Changed 
+### Removed
+### Fixed
+- reduced order of high-pass butterworth filter (with cut-off of 0.1Hz; see change in
+  v0.3.1) from 5 to 2 in remove_artefacts.m function
+### Added
+- name of .mat file as input argument to 'resample_savemat.m'
+- option in filter_butterworth_withnans.m to have separate filter orders for high and
+  low-pass components of a bandpass filter
+- file to plot rEEG (plot_rEEG.m)
+
+
 ## [0.3.1] - 2017-04-07
 ### Changed 
 - bandpass filter changed from 0.5-40 Hz to 0.1-40 Hz before removing large-amplitude

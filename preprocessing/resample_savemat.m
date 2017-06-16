@@ -22,18 +22,20 @@
 % John M. O' Toole, University College Cork
 % Started: 27-05-2013
 %
-% last update: Time-stamp: <2017-03-14 18:05:26 (otoolej)>
+% last update: Time-stamp: <2017-05-04 17:39:52 (otoolej)>
 %-------------------------------------------------------------------------------
-function [eeg_data,Fs]=resample_savemat(fname,channel_names)
+function [eeg_data,Fs]=resample_savemat(fname,channel_names,fname_out)
 if(nargin<1 || isempty(fname)), fname=[]; end
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
+if(nargin<3 || isempty(fname_out)), fname_out=[]; end
+
 
 
 DBplot=0;
 % EEG_viewer required for DBplot=1 
 % (https://github.com/otoolej/eeg_viewer.git)
 DBplot_test=0;
-SAVE_DATA=0;
+SAVE_DATA=1;
 
 
 neural_parameters;
@@ -156,11 +158,15 @@ Fs=Fs_new;
 % 4. SAVE
 %---------------------------------------------------------------------
 if(SAVE_DATA)
-    if(iscell(fname))
-        fname_stub=num2str(cell2mat(regexp(fname{1},'[\d+]','match')));
-        mfname=[EEG_DATA_DIR_MATFILES filesep fname_stub '.mat'];
+    if(isempty(fname_out))
+        if(iscell(fname))
+            fname_stub=num2str(cell2mat(regexp(fname{1},'[\d+]','match')));
+            mfname=[EEG_DATA_DIR_MATFILES filesep fname_stub '.mat'];
+        else
+            mfname=[EEG_DATA_DIR_MATFILES filesep fname '.mat'];
+        end
     else
-        mfname=[EEG_DATA_DIR_MATFILES filesep fname '.mat'];
+        mfname=[EEG_DATA_DIR_MATFILES fname_out '.mat'];
     end
     
     time_now=now;

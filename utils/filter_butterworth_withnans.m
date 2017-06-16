@@ -32,7 +32,7 @@
 % John M. O' Toole, University College Cork
 % Started: 31-10-2013
 %
-% last update: Time-stamp: <2017-03-14 18:27:27 (otoolej)>
+% last update: Time-stamp: <2017-06-15 17:47:21 (otoolej)>
 %-------------------------------------------------------------------------------
 function [y,inans]=filter_butterworth_withnans(x,Fs,F3db_lowpass,F3db_highpass, ...
                                        order,FILTER_REPLACE_ARTEFACTS,DB)
@@ -62,9 +62,17 @@ elseif(isempty(F3db_lowpass))
     [b,a]=butter(order,F3db_highpass/(Fs/2),'high');        
     
 else
-    [y,inans_low]=filter_butterworth_withnans(x,Fs,F3db_lowpass,[],order, ...
+    if(length(order)>1)
+        order_low=order(1);                
+        order_high=order(2);
+    else
+        order_low=order;        
+        order_high=order;        
+    end
+    
+    [y,inans_low]=filter_butterworth_withnans(x,Fs,F3db_lowpass,[],order_low, ...
                                               FILTER_REPLACE_ARTEFACTS, DB);
-    [y,inans_high]=filter_butterworth_withnans(y,Fs,[],F3db_highpass,order, ...
+    [y,inans_high]=filter_butterworth_withnans(y,Fs,[],F3db_highpass,order_high, ...
                                                FILTER_REPLACE_ARTEFACTS, DB);
     
     inans=unique([inans_low inans_low]);

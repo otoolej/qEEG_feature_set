@@ -43,7 +43,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2017-04-07 15:48:19 (otoolej)>
+% last update: Time-stamp: <2017-06-15 17:53:27 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -197,7 +197,7 @@ if(any(irem==1) && DBverbose)
 end
 
 x_nofilt=x;
-[x_filt,inans]=filter_butterworth_withnans(x,Fs,40,0.1,5);
+[x_filt,inans]=filter_butterworth_withnans(x,Fs,40,0.1,[5 2]);
 
 
 %---------------------------------------------------------------------
