@@ -13,6 +13,8 @@ quantitative features for newborn EEG using Matlab. ArXiv e-prints, arXiv:1704.0
 available at https://arxiv.org/abs/1704.05694.
 
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1052811.svg)](https://doi.org/10.5281/zenodo.1052811)
+
 # requirements:
 Matlab (R2013 or newer,
 [Mathworks](http://www.mathworks.co.uk/products/matlab/)) with the signal
