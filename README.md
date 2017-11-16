@@ -39,7 +39,7 @@ deviation of range-EEG, and brain symmetry index:
 	feat_st=generate_all_features(data_st,[],feature_set);
 ```
 
-See the `demo/` directory for further examples. All parameters are set the file
+See the `demos/` directory for further examples. All parameters are set the file
 `neural_parameters.m`.
 
 
