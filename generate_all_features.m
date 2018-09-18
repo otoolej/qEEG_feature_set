@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2017-03-15 10:06:13 (otoolej)>
+% last update: Time-stamp: <2018-05-03 17:55:38 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)

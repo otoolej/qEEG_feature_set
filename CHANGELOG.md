@@ -10,6 +10,23 @@ in the git logs.
 ### Fixed
 ### Added
 
+## [0.3.4] - 2018-09-18
+### Changed 
+- Higuchi method for fractal dimension can now incorporate NaNs
+### Removed
+### Fixed
+- tested with Matlab R2018a
+### Added
+
+## [0.3.3] - 2017-11-16
+### Changed 
+### Removed
+### Fixed
+- tested with Matlab R2017a
+### Added
+- licence file
+- DOI links from zenodo
+
 
 ## [0.3.2] - 2017-06-16
 ### Changed 

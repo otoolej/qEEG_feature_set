@@ -30,7 +30,7 @@
 % John M. O' Toole, University College Cork
 % Started: 03-10-2016
 %
-% last update: Time-stamp: <2017-03-14 10:45:50 (otoolej)>
+% last update: Time-stamp: <2018-09-18 10:56:25 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=fd_features(x,Fs,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -117,7 +117,7 @@ for k=k_all
         ik=1:floor( (N-m)/k );
         scale_factor=(N-1)/(floor( (N-m)/k )*k);
         
-        L(m)=sum( abs( x(m+ik.*k) - x(m+(ik-1).*k) ) )*(scale_factor/k);
+        L(m)=nansum( abs( x(m+ik.*k) - x(m+(ik-1).*k) ) )*(scale_factor/k);
     end
 
     L_avg(inext)=mean(L);
