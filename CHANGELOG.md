@@ -8,6 +8,10 @@ in the git logs.
 ### Changed 
 ### Removed
 ### Fixed
+- Bug in coherence function for surrogate analysis, which assumed that Pxx and Pyy 
+  would not change when randomising the phase of the FT for the surrogate signals. This
+  holds only when PSD is a periodogram. Assumption removed and now Pxx and Pyy generated
+  for each iteration.
 ### Added
 
 ## [0.3.4] - 2018-09-18
@@ -15,7 +19,7 @@ in the git logs.
 - Higuchi method for fractal dimension can now incorporate NaNs
 ### Removed
 ### Fixed
-- tested with Matlab R2018a
+- tested with Matlab R2018a 
 ### Added
 
 ## [0.3.3] - 2017-11-16

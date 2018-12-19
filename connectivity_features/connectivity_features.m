@@ -35,7 +35,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2017-03-31 10:09:30 (otoolej)>
+% last update: Time-stamp: <2018-12-19 15:47:48 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=connectivity_features(x,Fs,feat_name,params_st,ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -177,8 +177,7 @@ switch feat_name
             x2_surr=rand_phase(x2,L_surr);                
 
             for m=1:L_surr
-                coh_surr(m,:)=gen_coherence(x1_surr(m,:),x2_surr(m,:),Fs,params_st, ...
-                                            pxx,pyy);
+                coh_surr(m,:)=gen_coherence(x1_surr(m,:),x2_surr(m,:),Fs,params_st);
             end
 
             
@@ -339,16 +338,12 @@ end
 
 
 
-function [c,pxx,pyy,f_scale,fp]=gen_coherence(x,y,Fs,param_st,pxx,pyy)
+function [c,pxx,pyy,f_scale,fp]=gen_coherence(x,y,Fs,param_st)
 %---------------------------------------------------------------------
 % generate coherence (magnitude only) between x and y
 %---------------------------------------------------------------------
-if(nargin<5 || isempty(pxx)), pxx=[]; end
-
-if(isempty(pxx))
-    pxx=gen_spectrum(x,Fs,param_st);
-    pyy=gen_spectrum(y,Fs,param_st);
-end
+pxx=gen_spectrum(x,Fs,param_st);
+pyy=gen_spectrum(y,Fs,param_st);
 [pxy,~,f_scale,fp]=gen_cross_spectrum(x,y,Fs,param_st);
 
 c=(abs(pxy).^2)./(pxx.*pyy);
