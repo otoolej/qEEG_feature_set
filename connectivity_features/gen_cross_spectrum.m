@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-03-2017
 %
-% last update: Time-stamp: <2017-03-30 11:47:43 (otoolej)>
+% last update: Time-stamp: <2018-12-15 00:18:53 (otoolej)>
 %-------------------------------------------------------------------------------
 function [pxy,Nfreq,f_scale,fp]=gen_cross_spectrum(x,y,Fs,param_st)
 
@@ -29,6 +29,19 @@ spec_method=param_st.method;
     
 % remove NaNs:
 x(isnan(x))=[];
+
+if(strcmp(lower(spec_method), 'bartlett-psd'))
+    %---------------------------------------------------------------------
+    % Bartlett PSD: same as Welch with 0% overlap and rectangular
+    % window
+    %---------------------------------------------------------------------
+    window_type = 'rect';
+    overlap = 0;
+    
+    spec_method = 'psd';
+end    
+
+
 
 
 %---------------------------------------------------------------------
