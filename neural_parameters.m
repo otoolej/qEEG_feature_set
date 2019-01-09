@@ -134,7 +134,7 @@ feat_params_st.rEEG.freq_bands = FREQ_BANDS;
 % 1) PSD: estimate power spectral density (e.g. Welch periodogram)
 % 2) bartlett-PSD: Welch periodogram with 0% overlap and rectangular window
 %    (necessary if using the analytic assessment of zero coherence, see below)
-feat_params_st.connectivity.method = 'PSD'; 
+feat_params_st.connectivity.method = 'bartlett-PSD'; 
 
 feat_params_st.connectivity.freq_bands = FREQ_BANDS;
 feat_params_st.connectivity.L_window = 8; % PSD window in seconds
