@@ -49,7 +49,7 @@ ART_REF_LOW_CORR = 0.15; % if mean correlation coefficent across referential cha
 %          3) cubic spline interpolation ('cubic_interp')
 %          4) NaN ('nans'): replace with cubic spline before filtering and then NaN's
 %          after filtering
-FILTER_REPLACE_ARTEFACTS = 'cubic_interp';
+FILTER_REPLACE_ARTEFACTS = 'nans';
 
 feat_params_st.amplitude.FILTER_REPLACE_ARTEFACTS = FILTER_REPLACE_ARTEFACTS;
 feat_params_st.rEEG.FILTER_REPLACE_ARTEFACTS = FILTER_REPLACE_ARTEFACTS;
@@ -69,8 +69,7 @@ all_features_list;
 % $$$     ,'spectral_entropy' ...
 % $$$     ,'spectral_edge_frequency' ...
 % $$$     ,'amplitude_total_power' ...
-% $$$     ,'connectivity_BSI' ...
-% $$$     ,'connectivity_corr' ...    
+% $$$     ,'connectivity_coh_mean' ...
 % $$$                 };
 
 
@@ -85,7 +84,7 @@ FREQ_BANDS = [0.5 4; 4 7; 7 13; 13 30];
 %---------------------------------------------------------------------
 % how to estimate the spectrum for 'spectral_flatness', 'spectral_entropy',
 % spectral_edge_frequency features:
-% 1) PSD: estimate power spectral density (e.g. Welch periodgram)
+% 1) PSD: estimate power spectral density (e.g. Welch periodogram)
 % 2) robust-PSD: median (instead of mean) of spectrogram 
 % 3) periodogram: magnitude of the discrete Fourier transform
 feat_params_st.spectral.method = 'PSD'; 
@@ -132,24 +131,39 @@ feat_params_st.rEEG.freq_bands = FREQ_BANDS;
 % C. connectivity features
 %---------------------------------------------------------------------
 % how to estimate the cross spectrum for the coherence function:
-% 1) PSD: estimate power spectral density (e.g. Welch periodgram)
-% 2) robust-PSD: median (instead of mean) of spectrogram 
-% 3) periodogram: magnitude of the discrete Fourier transform
-% [NOTE: periodogram cannot be used for coherence function]
+% 1) PSD: estimate power spectral density (e.g. Welch periodogram)
+% 2) bartlett-PSD: Welch periodogram with 0% overlap and rectangular window
+%    (necessary if using the analytic assessment of zero coherence, see below)
 feat_params_st.connectivity.method = 'PSD'; 
 
 feat_params_st.connectivity.freq_bands = FREQ_BANDS;
-feat_params_st.connectivity.L_window = 2; % PSD window in seconds
-feat_params_st.connectivity.overlap = 50; % PSD window percentage overlap
+feat_params_st.connectivity.L_window = 8; % PSD window in seconds
+feat_params_st.connectivity.overlap = 75; % PSD window percentage overlap
 feat_params_st.connectivity.window_type = 'hamm'; % PSD window type
 
-% find lower coherence limit using surrogate data?
-% (number of iterations required to generate null-hypothesis distribution;
-%  set to 0 to turn off)
-feat_params_st.connectivity.coherence_surr_data = 100; 
-% alpha value for null-hypothesis disribution cut-off:
-feat_params_st.connectivity.coherence_surr_alpha = 0.05;
 
+
+% find lower coherence limit using either either a surrogate-data
+% approach [1] or an analytic threshold [2]
+% [1] Faes L, Pinna GD, Porta A, Maestri R, Nollo G (2004). Surrogate data analysis for
+%     assessing the significance of the coherence function. IEEE Transactions on
+%     Biomedical Engineering, 51(7):1156–1166.
+% [2] Halliday, DM, Rosenberg, JR, Amjad, AM, Breeze, P, Conway, BA, &
+%     Farmer, SF. (1995). A framework for the analysis of mixed time series/point
+%     process data--theory and application to the study of physiological tremor, single
+%     motor unit discharges and electromyograms. Progress in Biophysics and Molecular
+%     Biology, 64(2–3), 237–278.
+% 
+% options for 'feat_params_st.connectivity.coherence_zero_level' are: 
+% 1) 'surr' for [1]
+% 2) 'analytic' for [2]
+% 3) '' not to implement (no threshold)
+feat_params_st.connectivity.coherence_zero_level = 'analytic';
+% alpha value for null-hypothesis disribution cut-off:
+feat_params_st.connectivity.coherence_zero_alpha = 0.05;
+% number of iterations required to generate null-hypothesis distribution if 
+% using surrogate data approach ([2]):
+feat_params_st.connectivity.coherence_surr_iter = 500; 
 
 %---------------------------------------------------------------------
 %% SHORT-TIME ANALYSIS on EEG

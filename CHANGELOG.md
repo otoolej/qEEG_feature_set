@@ -6,13 +6,19 @@ in the git logs.
 
 ## unreleased
 ### Changed 
+- Syntax for specifying the zero-level threshold of the coherence function in
+  neural_parameters.m. NB: this will break compatibility with previous versions.
 ### Removed
+- 'robust-PSD' for coherence function (as does not satisfy the Schwartz inequality).
 ### Fixed
-- Bug in coherence function for surrogate analysis, which assumed that Pxx and Pyy 
-  would not change when randomising the phase of the FT for the surrogate signals. This
-  holds only when PSD is a periodogram. Assumption removed and now Pxx and Pyy generated
-  for each iteration.
+- Bug in coherence function for surrogate analysis, which assumed that auto-PSDs Pxx and
+  Pyy would not change when randomising the phase of the Fourier transform for the surrogate
+  signals. This holds only when PSD is a periodogram. Assumption removed and now Pxx and
+  Pyy generated for each iteration.
 ### Added
+- Analytic zero-coherence threshold (Halliday et al. 1995) for coherence
+  estimates. Estimates coherence using the Bartlett PSD.
+
 
 ## [0.3.4] - 2018-09-18
 ### Changed 

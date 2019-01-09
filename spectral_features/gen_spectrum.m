@@ -45,7 +45,7 @@
 % John M. O' Toole, University College Cork
 % Started: 16-03-2017
 %
-% last update: Time-stamp: <2017-03-29 11:35:39 (otoolej)>
+% last update: Time-stamp: <2018-12-19 12:39:33 (otoolej)>
 %-------------------------------------------------------------------------------
 function [pxx,itotal_bandpass,f_scale,Nfreq,fp]=gen_spectrum(x,Fs,param_st,SCALE_PSD)
 if(nargin<4 || isempty(SCALE_PSD)), SCALE_PSD=0; end
@@ -53,13 +53,23 @@ if(nargin<4 || isempty(SCALE_PSD)), SCALE_PSD=0; end
 L_window=param_st.L_window;
 window_type=param_st.window_type;
 overlap=param_st.overlap;
-freq_bands=param_st.freq_bands;
 spec_method=param_st.method;
     
     
 
 % remove NaNs:
 x(isnan(x))=[];
+
+if(strcmp(lower(spec_method), 'bartlett-psd'))
+    %---------------------------------------------------------------------
+    % Bartlett PSD: same as Welch with 0% overlap and rectangular
+    % window
+    %---------------------------------------------------------------------
+    window_type='rect';
+    overlap=0;
+    
+    spec_method = 'psd';
+end    
 
 
 switch lower(spec_method)
@@ -68,6 +78,7 @@ switch lower(spec_method)
     % Welch PSD
     %---------------------------------------------------------------------
     [S_stft,Nfreq,f_scale,win_epoch]=gen_STFT(x,L_window,window_type,overlap,Fs);
+    
 
     pxx=nanmean(S_stft)';
     N=length(pxx);
