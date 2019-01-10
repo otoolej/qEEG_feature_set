@@ -12,8 +12,9 @@ Full details of the methods can be found in: `JM O’Toole and GB Boylan (2017).
 quantitative features for newborn EEG using Matlab. ArXiv e-prints, arXiv:1704.05694`
 available at https://arxiv.org/abs/1704.05694.
 
+Releases archived at Zenodo:
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1052810.svg)](https://doi.org/10.5281/zenodo.1052810)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1052811.svg)](https://doi.org/10.5281/zenodo.1052811)
 
 # requirements:
 Matlab (R2013 or newer,
@@ -65,13 +66,12 @@ in more detail:
 | FD                         | fractal dimension                                                             | yes |
 | amplitude\_total\_power    | time-domain signal: total power                                               | yes |
 | amplitude\_SD              | time-domain signal: standard deviation                                        | yes |
-| amplitude\_skew            | time-domain signal: skewness                                                  | yes |
+| amplitude\_skew            | time-domain signal: skewness (absolute value)                                 | yes |
 | amplitude\_kurtosis        | time-domain signal: kurtosis                                                  | yes |
 | amplitude\_env\_mean       | envelope: mean value                                                          | yes |
 | amplitude\_env\_SD         | envelope: standard deviation (SD)                                             | yes |
 | connectivity\_BSI          | brain symmetry index (see Van Putten 2007)                                    | yes |
 | connectivity\_corr         | correlation (Spearman) between envelopes of hemisphere-paired channels        | yes |
-| connectivity\_lag\_corr    | lag of maximum correlation coefficient between hemisphere-paired channels     | yes |
 | connectivity\_coh\_mean    | coherence: mean value                                                         | yes |
 | connectivity\_coh\_max     | coherence: maximum value                                                      | yes |
 | connectivity\_coh\_freqmax | coherence: frequency of maximum value                                         | yes |
@@ -113,10 +113,10 @@ with some files of interest:
 
 
 # test computer setup
-- hardware:  Intel(R) Xeon(R) CPU E5-1603 0 @ 2.80GHz; 8GB memory.
-- operating system: Ubuntu GNU/Linux x86_64 distribution (Yakkey Yak, 16.10), with Linux
-  kernel 4.8.0-41-generic 
-- software: Matlab (R2013a)
+- hardware:  Intel Core i7-7700 @ 2GHz; 32GB memory.
+- operating system: Ubuntu GNU/Linux x86_64 distribution (18.10) with Linux kernel
+  4.18.0-13-generic
+- software: Matlab (R2018b)
 
 ---
 
@@ -192,7 +192,7 @@ John M. O' Toole
 Neonatal Brain Research Group,  
 Irish Centre for Fetal and Neonatal Translational Research (INFANT),  
 Department of Paediatrics and Child Health,  
-Room 2.19 Paediatrics Bld, Cork University Hospital,  
+Room 2.19 UCC Academic Paediatric Unit, Cork University Hospital,  
 University College Cork,  
 Ireland
 
