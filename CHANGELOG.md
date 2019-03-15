@@ -9,6 +9,7 @@ in the git logs.
 ### Removed
 ### Fixed
 - tested with Matlab R2018b 
+- bug when downsampling: always using the resample function even when not necessary
 ### Added
 
 

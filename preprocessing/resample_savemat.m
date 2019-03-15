@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 27-05-2013
 %
-% last update: Time-stamp: <2017-05-04 17:39:52 (otoolej)>
+% last update: Time-stamp: <2019-03-15 10:17:52 (otoolej)>
 %-------------------------------------------------------------------------------
 function [eeg_data,Fs]=resample_savemat(fname,channel_names,fname_out)
 if(nargin<1 || isempty(fname)), fname=[]; end
@@ -137,8 +137,9 @@ parfor n=1:N_channels
 end
 
 % b. decimate:
-if(isa(Fs/Fs_new,'integer'))
-    idec=1:Fs/Fs_new:size(data,2);
+isint = @(x) (x == round(x));
+if(isint(Fs/Fs_new))
+    idec=1:(Fs/Fs_new):size(data,2);
     
     eeg_data=NaN(N_channels,length(idec));
     for n=1:N_channels
