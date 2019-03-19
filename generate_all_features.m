@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2019-03-19 13:13:12 (otoolej)>
+% last update: Time-stamp: <2019-03-19 14:32:29 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
@@ -148,15 +148,15 @@ for n=1:N_feats
             end
             
             % median over all epochs
-            feats_channel(c,:)=nanmedian(feats_epochs);
+            feats_channel(c,:)=nanmedian(feats_epochs, 1);
         end
         % and median over all channels:
-        feat_st.(char(feat_set{n}))=nanmedian(feats_channel,1);
+        feat_st.(char(feat_set{n}))=nanmedian(feats_channel, 1);
 
-    %---------------------------------------------------------------------
-    % CONNECTIVITY FEATURES
-    % (use over all channels but also divide into epochs)
-    %---------------------------------------------------------------------
+        %---------------------------------------------------------------------
+        % CONNECTIVITY FEATURES
+        % (use over all channels but also divide into epochs)
+        %---------------------------------------------------------------------
     elseif(strfind(feat_set{n},'connectivity'))
 
         x_epochs=[]; 
@@ -181,13 +181,13 @@ for n=1:N_feats
             
         end
         % median over all epochs
-        feat_st.(char(feat_set{n}))=nanmedian(feats_epochs);
+        feat_st.(char(feat_set{n}))=nanmedian(feats_epochs, 1);
         
 
-    %---------------------------------------------------------------------
-    % inter-burst interval features
-    % (use entire recording but channel-by-channel)
-    %---------------------------------------------------------------------
+        %---------------------------------------------------------------------
+        % inter-burst interval features
+        % (use entire recording but channel-by-channel)
+        %---------------------------------------------------------------------
     elseif(strfind(feat_set{n},'IBI_'))
         
         % B) iterate over channels
@@ -221,7 +221,8 @@ N_epochs = ceil( (N - (L_epoch - L_hop)) / L_hop );
 if(N_epochs < 1) 
     N_epochs = 1; 
     fprintf('| WARNING: signal length is less than segment length (L_epoch - L_hop).\n');
-    fprintf('| Adjust ''EPOCH_LENGTH'' or ''EPOCH_OVERLAP'' in ''neural_parameters.m'' file.');
+    fprintf('| Adjust ''EPOCH_LENGTH'' or ''EPOCH_OVERLAP'' in ');
+    fprintf('''neural_parameters.m'' file.\n');
 end
 nw = 0:(L_epoch - 1);
 ix = 0:(N - 1);

@@ -3,16 +3,23 @@ All notable changes to this project will be documented in this file. Project sta
 2016-04-01 but this log started 2017-03-16, after version 0.2.2. More details can be found
 in the git logs.
 
-
 ## unreleased
+### Changed 
+### Removed
+### Fixed
+### Added
+
+
+## [0.4.1] - 2019-03-19
 ### Changed 
 - minor tweak to the overlap-and-add analysis when generating features on an epoch of EEG;
   now include as much of the signal as possible and pad with NaNs when necessary.
 ### Removed
 ### Fixed
-- tested with Matlab R2018b 
-- bug when downsampling: always using the resample function even when not necessary
+- tested with Matlab R2018b;
+- bug when downsampling: always using the resample function even when not necessary;
 - bug in PSD power feature if length-epoch < (2 * PSD-window-length); 
+- bug when length-epoch = signal-length, was summing over frequency bands.
 ### Added
 
 

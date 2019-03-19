@@ -16,7 +16,7 @@
 % John M. O' Toole, University College Cork
 % Started: 17-03-2017
 %
-% last update: Time-stamp: <2018-12-15 00:18:53 (otoolej)>
+% last update: Time-stamp: <2019-03-19 15:03:23 (otoolej)>
 %-------------------------------------------------------------------------------
 function [pxy,Nfreq,f_scale,fp]=gen_cross_spectrum(x,y,Fs,param_st)
 
@@ -58,13 +58,13 @@ switch lower(spec_method)
     %---------------------------------------------------------------------
     % mean for Welch PSD
     %---------------------------------------------------------------------
-    pxy=nanmean(S_xy)';    
+    pxy = nanmean(S_xy, 1).';
     
   case 'robust-psd'
     %---------------------------------------------------------------------
     % median for robust PSD
     %---------------------------------------------------------------------
-    pxy=nanmedian(S_xy)';
+    pxy = nanmedian(S_xy, 1).';
     
   otherwise
     fprintf('unknown cross-spectral method ''%s''; check spelling\n',spec_method);

@@ -45,7 +45,7 @@
 % John M. O' Toole, University College Cork
 % Started: 16-03-2017
 %
-% last update: Time-stamp: <2019-03-19 11:09:22 (otoolej)>
+% last update: Time-stamp: <2019-03-19 14:45:15 (otoolej)>
 %-------------------------------------------------------------------------------
 function [pxx,itotal_bandpass,f_scale,Nfreq,fp]=gen_spectrum(x,Fs,param_st,SCALE_PSD)
 if(nargin<4 || isempty(SCALE_PSD)), SCALE_PSD=0; end
@@ -80,12 +80,7 @@ switch lower(spec_method)
     [S_stft,Nfreq,f_scale,win_epoch]=gen_STFT(x,L_window,window_type,overlap,Fs);
 
     % average over time:
-    if(size(S_stft, 1) > 1)
-        pxx=nanmean(S_stft)';
-    else
-        pxx=S_stft';
-    end
-    dispVars(size(pxx));
+    pxx = nanmean(S_stft, 1)';
     N=length(pxx);
 
     % normalise (so similar to pwelch):
@@ -100,11 +95,7 @@ switch lower(spec_method)
     [S_stft,Nfreq,f_scale,win_epoch]=gen_STFT(x,L_window,window_type,overlap,Fs);
 
     % average over time:
-    if(size(S_stft, 1) > 1)
-        pxx=nanmedian(S_stft)';
-    else
-        pxx=S_stft';
-    end
+    pxx = nanmedian(S_stft, 1)';    
     N=length(pxx);
     
     % normalise (so is similar to Welch's PSD):

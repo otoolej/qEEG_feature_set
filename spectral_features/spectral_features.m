@@ -26,7 +26,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2017-03-29 12:15:44 (otoolej)>
+% last update: Time-stamp: <2019-03-19 15:34:05 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -49,7 +49,6 @@ total_freq_bands=params_st.total_freq_bands;
 
 
 
-% $$$ keyboard;
 switch feat_name
   case {'spectral_power','spectral_relative_power'}
         %---------------------------------------------------------------------
