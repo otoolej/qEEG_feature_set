@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2018-05-03 17:55:38 (otoolej)>
+% last update: Time-stamp: <2019-03-19 13:13:12 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
@@ -205,26 +205,34 @@ end
 
 
 
-
-function [x_epochs]=overlap_epochs(x,Fs,L_window,overlap,window_type)
+function [x_epochs] = overlap_epochs(x, Fs, L_window, overlap, window_type)
 %---------------------------------------------------------------------
 % overlapping epochs in one matrix
 %---------------------------------------------------------------------
 if(nargin<4 || isempty(overlap)), overlap=50; end
 if(nargin<5 || isempty(window_type)), window_type='rect'; end
 
+x = x(:).';
 
-[L_hop,L_epoch,win_epoch]=gen_epoch_window(overlap,L_window,window_type,Fs);
+[L_hop, L_epoch, win_epoch] = gen_epoch_window(overlap, L_window, window_type, Fs);
 
-N=length(x);
-N_epochs=floor( (N-(L_epoch-L_hop))/L_hop );
-if(N_epochs<1) N_epochs=1; end
-nw=0:L_epoch-1;
+N = length(x);
+N_epochs = ceil( (N - (L_epoch - L_hop)) / L_hop );
+if(N_epochs < 1) 
+    N_epochs = 1; 
+    fprintf('| WARNING: signal length is less than segment length (L_epoch - L_hop).\n');
+    fprintf('| Adjust ''EPOCH_LENGTH'' or ''EPOCH_OVERLAP'' in ''neural_parameters.m'' file.');
+end
+nw = 0:(L_epoch - 1);
+ix = 0:(N - 1);
 
 
-x_epochs=zeros(N_epochs,L_epoch);
-for k=1:N_epochs
-    nf=mod(nw+(k-1)*L_hop,N);
-    
-    x_epochs(k,:)=x(nf+1).*win_epoch;
+x_epochs = NaN(N_epochs, L_epoch);
+for k = 1:N_epochs
+    nf = nw + (k - 1) * L_hop;
+    % zero-pad if outside x:
+    nf = nf(ismember(nf, ix)) + 1;
+    i_nf = 1:length(nf);
+
+    x_epochs(k, i_nf) = x(nf) .* win_epoch(i_nf).';
 end

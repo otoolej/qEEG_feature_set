@@ -6,10 +6,13 @@ in the git logs.
 
 ## unreleased
 ### Changed 
+- minor tweak to the overlap-and-add analysis when generating features on an epoch of EEG;
+  now include as much of the signal as possible and pad with NaNs when necessary.
 ### Removed
 ### Fixed
 - tested with Matlab R2018b 
 - bug when downsampling: always using the resample function even when not necessary
+- bug in PSD power feature if length-epoch < (2 * PSD-window-length); 
 ### Added
 
 
