@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 08-05-2013
 %
-% last update: Time-stamp: <2017-03-14 16:46:53 (otoolej)>
+% last update: Time-stamp: <2019-04-29 17:03:20 (otoolej)>
 %-------------------------------------------------------------------------------
 function x_filt=filter_zerophase(x,Fs,LP_fc,HP_fc,L_filt,win_type,DBplot)
 if(nargin<2 || isempty(Fs)), Fs=1; end
@@ -53,12 +53,17 @@ end
 
 N=length(x);
 if(isempty(L_filt) || L_filt>(N/4))
-    L_filt=make_odd(round(N/2-4)); 
+    L_filt=make_odd(round(N/4-2)); 
 end
 
 wwin=[];
 if(~isempty(win_type))
     wwin=gen_window(win_type,L_filt);
+    
+    fir_ = @(L, f_cut, ftype, wwin) fir1(L, f_cut, ftype, wwin);
+else
+    % update for R2019a: fir1.m no-long ignores empty window:
+    fir_ = @(L, f_cut, ftype, wwin) fir1(L, f_cut, ftype);
 end
 
 %---------------------------------------------------------------------
@@ -69,22 +74,22 @@ if(~isempty(LP_fc) && ~isempty(HP_fc))
     if(LP_fc>HP_fc)
         % band-pass:
         filt_passband=[HP_fc/(Fs/2) LP_fc/(Fs/2)];
-        b=fir1(L_filt-1,filt_passband,wwin);  
+        b = fir_(L_filt-1, filt_passband, 'bandpass', wwin);  
     else
         % or band-stop:
         filt_passband=[LP_fc/(Fs/2) HP_fc/(Fs/2)];
-        b=fir1(L_filt-1,filt_passband,'stop',wwin);  
+        b = fir_(L_filt-1, filt_passband, 'stop', wwin);  
     end
         
         
 elseif(~isempty(LP_fc))
     filt_passband=LP_fc/(Fs/2);
-    b=fir1(L_filt-1,filt_passband,wwin);
+    b = fir_(L_filt-1, filt_passband, 'low', wwin);
 
 elseif(~isempty(HP_fc))
     L_filt=L_filt+1;
     filt_passband=HP_fc/(Fs/2);
-    b=fir1(L_filt-1,filt_passband,'high',wwin);
+    b = fir_(L_filt-1, filt_passband, 'high', wwin);
     
 else
     error('need to specify cut-off frequency.');

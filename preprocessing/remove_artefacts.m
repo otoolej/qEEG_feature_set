@@ -43,7 +43,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2017-06-15 17:53:27 (otoolej)>
+% last update: Time-stamp: <2019-04-29 12:57:27 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end
@@ -192,7 +192,7 @@ for m=ielec
     x(irun)=NaN;
 end
 if(any(irem==1) && DBverbose)
-    fprintf('continuous row of zeros: %.2f\n', ...
+    fprintf('continuous row of zeros: %.2f%%\n', ...
             100*length(find(irem==1))/length(x));
 end
 
@@ -251,7 +251,7 @@ for m=ielec
     x(irun)=NaN;
 end
 if(any(irem==1) && DBverbose)
-    fprintf('continuous row of constant values: %.2f\n', ...
+    fprintf('continuous row of constant values: %.2f%%\n', ...
             100*length(find(irem==1))/length(x));
 end
 
@@ -283,7 +283,7 @@ x=x_nofilt;
 
 
 if(any(irem==1) && DBverbose)
-    fprintf('length of sudden-jump artefacts: %.2f\n', ...
+    fprintf('length of sudden-jump artefacts: %.2f%%\n', ...
             100*length(find(irem==1))/length(x));
     
 % $$$     figure(22); clf; hold all;

@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 20-04-2016
 %
-% last update: Time-stamp: <2017-03-14 12:39:49 (otoolej)>
+% last update: Time-stamp: <2019-04-29 16:58:52 (otoolej)>
 %-------------------------------------------------------------------------------
 function ipairs=channel_hemisphere_pairs(channel_labels)
 
@@ -50,7 +50,8 @@ for n=1:N_left
 
     % and check for reversed order:
     sep=strfind(ch_left_match,'-');% sep=sep{1};
-    ch1=ch_left_match(1:(sep-1)); ch2=ch_left_match((sep+1):end);
+    ch1=ch_left_match(1:(sep-1)); 
+    ch2=ch_left_match((sep+1):end);
     ch_left_match_rv=[ch2 '-' ch1];
     
     imatch_rv=find(strcmp(channel_labels(iright),ch_left_match_rv));
@@ -67,6 +68,11 @@ for n=1:N_left
         end
     end
 
+    % if left/right side share common electrode (e.g. Cz),
+    % then should ignore
+    if(contains(ch_left, ch1) || contains(ch_left, ch2))
+        ipairs(1:2, n) = NaN;
+    end
 
 end
 

@@ -9,6 +9,16 @@ in the git logs.
 ### Fixed
 ### Added
 
+## [0.4.2] - 2019-04-29
+### Changed 
+- connectivity analysis: remove channel pairs that have common electrode, e.g. 'C3-Cz' and
+  'Cz-C4'
+### Removed
+### Fixed
+- tested with Matlab R2019a
+- fixed syntax problem for fir1 function for R2019a
+### Added
+
 
 ## [0.4.1] - 2019-03-19
 ### Changed 
