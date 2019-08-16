@@ -7,6 +7,8 @@ in the git logs.
 ### Changed 
 ### Removed
 ### Fixed
+- bug in rand_phase.m when taking the inverse-FFT (random signal will time-reversed but
+  with same initial x[0] value); won't affect the coherence values.
 ### Added
 
 ## [0.4.2] - 2019-04-29

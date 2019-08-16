@@ -27,7 +27,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-08-2016
 %
-% last update: Time-stamp: <2017-03-14 12:42:42 (otoolej)>
+% last update: Time-stamp: <2019-08-16 16:05:29 (otoolej)>
 %-------------------------------------------------------------------------------
 function y=rand_phase(x,N_iter)
 if(nargin<2 || isempty(N_iter)), N_iter=1; end
@@ -66,12 +66,13 @@ else
     Y=abs(X).*exp(j.*rphase);
 end
 
-y=real( ifft(Y') )';
+y=real( ifft(Y.') )';
 
 
 DBplot=0;
 if(DBplot)
     figure(18); clf; hold all;
+    plot(x);
     plot(y');
 
     if(N_iter>1), yplot=y(end,:); end
