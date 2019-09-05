@@ -21,7 +21,7 @@
 %     N=size(data_st.eeg_data_ref,2);
 % 
 %     % simulate artefacts:
-%     % 1. F4 not properly attached:
+%     % 1. F3 not properly attached:
 %     if3=find(strcmp(data_st.ch_labels_ref,'F3'));
 %     data_st.eeg_data_ref(if3,:)=randn(1,N).*10;
 %
@@ -43,7 +43,7 @@
 % John M. O' Toole, University College Cork
 % Started: 05-04-2016
 %
-% last update: Time-stamp: <2019-04-29 12:57:27 (otoolej)>
+% last update: Time-stamp: <2019-09-05 13:59:26 (otoolej)>
 %-------------------------------------------------------------------------------
 function data=remove_artefacts(data,ch_labels,Fs,data_ref,ch_refs)
 if(nargin<3), error('requires 3 input arguments.'); end

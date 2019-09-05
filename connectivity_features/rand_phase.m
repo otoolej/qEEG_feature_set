@@ -19,7 +19,7 @@
 %     figure(1); clf; hold all;
 %     subplot(2,1,1);
 %     plot(x);
-%     subplot(2,1,1);
+%     subplot(2,1,2);
 %     plot(y);
 %
 % 
@@ -27,7 +27,7 @@
 % John M. O' Toole, University College Cork
 % Started: 24-08-2016
 %
-% last update: Time-stamp: <2019-08-16 16:05:29 (otoolej)>
+% last update: Time-stamp: <2019-09-05 13:59:58 (otoolej)>
 %-------------------------------------------------------------------------------
 function y=rand_phase(x,N_iter)
 if(nargin<2 || isempty(N_iter)), N_iter=1; end

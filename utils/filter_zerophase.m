@@ -29,7 +29,7 @@
 % John M. O' Toole, University College Cork
 % Started: 08-05-2013
 %
-% last update: Time-stamp: <2019-04-29 17:03:20 (otoolej)>
+% last update: Time-stamp: <2019-09-05 14:03:09 (otoolej)>
 %-------------------------------------------------------------------------------
 function x_filt=filter_zerophase(x,Fs,LP_fc,HP_fc,L_filt,win_type,DBplot)
 if(nargin<2 || isempty(Fs)), Fs=1; end
@@ -134,7 +134,7 @@ switch win_type
   case {'hann','hanning'}
     w=hanning(L);
   case {'rect','rectangular'}
-    w=ones(1,L)./L;
+    w=ones(1,L);
   case {'black','blackman'}
     w=blackman(L);
   case {'blackmanharris'}

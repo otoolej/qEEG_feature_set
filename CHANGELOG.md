@@ -9,6 +9,7 @@ in the git logs.
 ### Fixed
 - bug in rand_phase.m when taking the inverse-FFT (random signal will time-reversed but
   with same initial x[0] value); won't affect the coherence values.
+- for rectangular window in 'filter_zerophase.m' don't divide by window length
 ### Added
 
 ## [0.4.2] - 2019-04-29
