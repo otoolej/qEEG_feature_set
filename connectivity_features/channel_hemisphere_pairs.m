@@ -22,7 +22,7 @@
 % John M. O' Toole, University College Cork
 % Started: 20-04-2016
 %
-% last update: Time-stamp: <2019-04-29 16:58:52 (otoolej)>
+% last update: Time-stamp: <2019-11-06 09:22:54 (otoolej)>
 %-------------------------------------------------------------------------------
 function ipairs=channel_hemisphere_pairs(channel_labels)
 
@@ -70,7 +70,8 @@ for n=1:N_left
 
     % if left/right side share common electrode (e.g. Cz),
     % then should ignore
-    if(contains(ch_left, ch1) || contains(ch_left, ch2))
+    % if(contains(ch_left, ch1) || contains(ch_left, ch2))
+    if ~isempty(strfind(ch_left, ch1)) || ~isempty(strfind(ch_left, ch2))
         ipairs(1:2, n) = NaN;
     end
 
