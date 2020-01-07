@@ -16,13 +16,20 @@ Releases archived at Zenodo:
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1052810.svg)](https://doi.org/10.5281/zenodo.1052810)
 
 
-# requirements:
+---
+
+[Requirements](#requirements) | [Use](#use) | [Quantitative
+features](#quantitative-features) | [Files](#files) | [Test computer
+setup](#test-computer-setup) | [Licence](#licence) | [References](#references) |
+[Contact](#contact)
+
+## Requirements:
 Matlab (R2013 or newer,
 [Mathworks](http://www.mathworks.co.uk/products/matlab/)) with the signal
 processing toolbox and statistics toolbox. Not tested with Octave but should work with minor
 tweaking.
 
-# use 
+## Use 
 
 Set paths in Matlab, or do so using the `load_curdir` function:
 ```matlab
@@ -46,7 +53,7 @@ See the `demos/` directory for further examples. All parameters are set the file
 `neural_parameters.m`.
 
 
-# quantitative features
+## Quantitative features
 
 The feature set contains amplitude, spectral, connectivity, and burst annotation features.
 Amplitude features include range-EEG (D. O’ Reilly et al., 2012;
@@ -91,7 +98,7 @@ in more detail:
 FB: features generated for each frequency band (FB)
 
 
-# files
+## Files
 Some Matlab files (.m files) have a description and an example in the header. To read this
 header, type `help <filename.m>` in Matlab.  Directory structure is as follows: 
 ```
@@ -112,15 +119,14 @@ with some files of interest:
 
 
 
-# test computer setup
-- hardware:  Intel Core i7-7700 @ 2GHz; 32GB memory.
-- operating system: Ubuntu GNU/Linux x86_64 distribution (18.10) with Linux kernel
-  4.18.0-13-generic
-- software: Matlab (R2018b)
+## Test computer setup
+- hardware:  Intel Core i7-8700K @ 4.5GHz; 32GB memory.
+- operating system: Ubuntu GNU/Linux x86_64 distribution (19.10) with Linux kernel
+  5.3.0-24-generic
+- software: Matlab (R2019a)
 
----
 
-# licence
+## Licence
 
 ```
 Copyright (c) 2016, John M. O' Toole, University College Cork
@@ -153,7 +159,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
 
-# references
+## References
 
 1. JM O’Toole and GB Boylan (2017). NEURAL: quantitative features for newborn EEG using
 Matlab. ArXiv e-prints, arXiv:[1704.05694](https://arxiv.org/abs/1704.05694).
@@ -183,18 +189,22 @@ electroencephalogram. Clinical Neurophysiology, 127(8):2910–2918
     Multi-Feature Approach. Medical Engineering and
     Physics, vol. 45, pp. 42-50, 2017. 
 	[DOI:10.1016/j.medengphy.2017.04.003](https://dx.doi.org/10.1016/j.medengphy.2017.04.003)
----
+	
+9. JM O'Toole and GB Geraldine (2019). Quantitative Preterm EEG Analysis: The Need for
+   Caution in Using Modern Data Science Techniques. Frontiers in Pediatrics 7, 174
+   [DOI:10.3389/fped.2019.00174](https://doi.org/10.3389/fped.2019.00174)
+	
 
-# contact
+## Contact
 
 John M. O' Toole
 
 Neonatal Brain Research Group,  
-Irish Centre for Fetal and Neonatal Translational Research (INFANT),  
+[INFANT Research Centre](https://www.infantcentre.ie/),  
 Department of Paediatrics and Child Health,  
 Room 2.19 UCC Academic Paediatric Unit, Cork University Hospital,  
 University College Cork,  
 Ireland
 
-- email: j.otoole AT ieee.org
-- web: http://otoolej.github.io/
+- email: jotoole AT ucc _dot ie 
+

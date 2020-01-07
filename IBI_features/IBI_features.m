@@ -30,7 +30,7 @@
 % John M. O' Toole, University College Cork
 % Started: 26-04-2016
 %
-% last update: Time-stamp: <2017-03-14 13:57:44 (otoolej)>
+% last update: Time-stamp: <2020-01-06 13:39:10 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=IBI_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -109,23 +109,24 @@ end
 
 
 
-
-
-function pc_anno=estimate_IBI_lengths(anno,percentiles_all,Fs)
+function pc_anno = estimate_IBI_lengths(anno, percentiles_all, Fs)
 %---------------------------------------------------------------------
 % estimate max./median IBI length
 %---------------------------------------------------------------------
-min_ibi_interval=16;
+min_ibi_interval = Fs / 4;
 
-lens_anno=len_zeros(anno,0);
+lens_anno = len_zeros(anno, 0);
 
-ishort=find(lens_anno<min_ibi_interval);
+ishort = find(lens_anno < min_ibi_interval);
 if(~isempty(ishort))
-    lens_anno(ishort)=[]; 
+    lens_anno(ishort) = []; 
 end
-pc_anno=prctile(lens_anno,percentiles_all);
-pc_anno=pc_anno./Fs;
-
+if(~isempty(lens_anno))
+    pc_anno = prctile(lens_anno,percentiles_all);
+else
+    pc_anno = zeros(1, length(percentiles_all));
+end
+pc_anno = pc_anno ./ Fs;
 
 
 
