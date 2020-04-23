@@ -30,7 +30,7 @@
 % John M. O' Toole, University College Cork
 % Started: 26-04-2016
 %
-% last update: Time-stamp: <2020-01-06 13:39:10 (otoolej)>
+% last update: Time-stamp: <2020-04-22 18:44:22 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=IBI_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -60,7 +60,7 @@ if(bdetect_path~=2)
 end
 
 
-% $$$ keyboard;
+
 [burst_anno,t_stat]=eeg_burst_detector(x,Fs);
 
 
@@ -71,6 +71,14 @@ if(DBplot)
     linkaxes(hx,'x');
 end
 
+
+%---------------------------------------------------------------------
+% remove NaNs
+% 
+% NOTE -- thisassumes that the same state (either burst or IBI) continues
+% after the sequence of NaNs
+%---------------------------------------------------------------------
+burst_anno = burst_anno(~isnan(burst_anno));    
 
 
 switch feat_name

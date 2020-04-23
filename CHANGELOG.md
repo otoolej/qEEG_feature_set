@@ -7,12 +7,23 @@ in the git logs.
 ### Changed 
 ### Removed
 ### Fixed
+### Added
+
+
+## [0.4.3] - 2020-04-22
+### Changed 
+- changed behaviour for `IBI_burst_prc` and `IBI_burst_number` features: now removing any
+  NaNs before calculating this metric
+### Removed
+### Fixed
 - bug in rand_phase.m when taking the inverse-FFT (random signal will time-reversed but
   with same initial x[0] value); won't affect the coherence values.
-- for rectangular window in 'filter_zerophase.m' don't divide by window length
+- for rectangular window in `filter_zerophase.m` don't divide by window length
 - for IBI features fixed removal of minimal interval of 16 samples and set to 1/4 seconds
   instead
 - avoid error if maximum/median IBI duration is zero
+- bug fix for `spectral_diff` feature: extra zero was included in spectral difference measure
+  before taking the median
 ### Added
 
 ## [0.4.2] - 2019-04-29

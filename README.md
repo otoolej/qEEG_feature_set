@@ -1,3 +1,6 @@
+[![arXiv](https://img.shields.io/badge/arXiv-1704.05694%20-red)](https://arxiv.org/abs/1704.05694)
+
+
 NEURAL: A Neonatal EEG Feature Set in Matlab 
 ============================================
 
@@ -8,13 +11,16 @@ weeks), will generate features from bursts annotations (e.g. maximum inter-burst
 interval). Burst annotations require a separate package, also available on
 [github](https://github.com/otoolej/burst_detector). 
 
-Full details of the methods can be found in: `JM O’Toole and GB Boylan (2017). NEURAL:
-quantitative features for newborn EEG using Matlab. ArXiv e-prints, arXiv:1704.05694`
-available at https://arxiv.org/abs/1704.05694.
-
 Releases archived at Zenodo:
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1052810.svg)](https://doi.org/10.5281/zenodo.1052810)
 
+
+Full details of the methods are in:  
+
+`JM O’Toole and GB Boylan (2017). NEURAL:
+quantitative features for newborn EEG using Matlab. ArXiv e-prints, arXiv:1704.05694`  
+
+which is available at https://arxiv.org/abs/1704.05694.
 
 ---
 
@@ -23,7 +29,7 @@ features](#quantitative-features) | [Files](#files) | [Test computer
 setup](#test-computer-setup) | [Licence](#licence) | [References](#references) |
 [Contact](#contact)
 
-## Requirements:
+## Requirements
 Matlab (R2013 or newer,
 [Mathworks](http://www.mathworks.co.uk/products/matlab/)) with the signal
 processing toolbox and statistics toolbox. Not tested with Octave but should work with minor
@@ -197,7 +203,7 @@ electroencephalogram. Clinical Neurophysiology, 127(8):2910–2918
 
 ## Contact
 
-John M. O' Toole
+John M. O'Toole
 
 Neonatal Brain Research Group,  
 [INFANT Research Centre](https://www.infantcentre.ie/),  

@@ -4,18 +4,21 @@
 % Syntax: feat_st=generate_all_features(fname,channel_names,feat_set)
 %
 % Inputs: 
-%     fname          - either EEG filename or data structure with EEG 
-%                      e.g. data structure: data_st = gen_test_EEGdata(5*60,64,1); 
-%     channel_names  - channel labels to process (default, process all)
-%                      e.g. {'C3-O1','C4-O2','F3-C3','F4-C4'}
-%     feat_set       - cell of features to compute, 
-%                      e.g. {'spectral_relative_power','rEEG_SD', 'connectivity_BSI'}
-%
+%     fname             - either EEG filename or data structure with EEG 
+%                         e.g. data structure: data_st = gen_test_EEGdata(5*60,64,1); 
+%     channel_names     - channel labels to process (default, process all)
+%                         e.g. {'C3-O1','C4-O2','F3-C3','F4-C4'}
+%     feat_set          - cell of features to compute, 
+%                         e.g. {'spectral_relative_power','rEEG_SD', 'connectivity_BSI'}
+%     return_feat_epoch - return features for each epoch? (true/false; default=false)
+%                         (if true then returns 2nd output argument, 'feats_per_epoch')
+% 
 % Outputs: 
-%     feat_st - structure containing features
+%     feat_st         - structure containing features
+%     feats_per_epoch - cell of features x channel x epoch x frequency_band
 %
+% 
 % Example:
-%
 %       % generate 5 minutes of simulated multichannel EEG data, with 64 Hz sample frequency
 %       data_st=gen_test_EEGdata(5*60,64,1);
 %
@@ -29,13 +32,13 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2019-03-19 14:32:29 (otoolej)>
+% last update: Time-stamp: <2020-04-23 16:24:02 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
                                                   return_feat_epoch)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
 if(nargin<3 || isempty(feat_set)), feat_set=[]; end
-if(nargin<4 || isempty(return_feat_epoch)), return_feat_epoch=0; end
+if(nargin<4 || isempty(return_feat_epoch)), return_feat_epoch = false; end
 
 
 

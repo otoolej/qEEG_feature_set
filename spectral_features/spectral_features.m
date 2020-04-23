@@ -26,7 +26,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2019-03-19 15:34:05 (otoolej)>
+% last update: Time-stamp: <2020-04-22 17:27:24 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -170,7 +170,7 @@ switch feat_name
 
         S_stft_band=S_stft(:,ibandpass)./max(max(S_stft(:,ibandpass)));
 
-        spec_diff=zeros(1,N_epochs);
+        spec_diff=zeros(1,N_epochs - 1);
         for n=1:N_epochs-1
             v1=S_stft_band(n,:);  v2=S_stft_band(n+1,:);
             spec_diff(n)=mean( abs(v1-v2).^2 );
