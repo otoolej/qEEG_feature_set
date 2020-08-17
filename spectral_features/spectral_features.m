@@ -26,7 +26,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2020-04-22 17:27:24 (otoolej)>
+% last update: Time-stamp: <2020-08-17 16:53:32 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx=spectral_features(x,Fs,feat_name,params_st)
 if(nargin<2), error('need 2 input arguments'); end
@@ -48,50 +48,57 @@ freq_bands=params_st.freq_bands;
 total_freq_bands=params_st.total_freq_bands;
 
 
+if(length(x) < (params_st.L_window * Fs))
+    warning('SPECTRAL features: signal length < window length; set shorter L_window');
+    warning('SPECTRAL features: not calculating spectral features.');
+    featx = NaN;
+    return;
+end
+
 
 switch feat_name
   case {'spectral_power','spectral_relative_power'}
-        %---------------------------------------------------------------------
-        % use periodogram to estimate spectral power 
-        %---------------------------------------------------------------------
-        params_st.method='periodogram';
-        [pxx,itotal_bandpass,f_scale,N,fp]=gen_spectrum(x,Fs,params_st,1);
-        pxx=pxx.*Fs;
+    %---------------------------------------------------------------------
+    % use periodogram to estimate spectral power 
+    %---------------------------------------------------------------------
+    params_st.method='periodogram';
+    [pxx,itotal_bandpass,f_scale,N,fp]=gen_spectrum(x,Fs,params_st,1);
+    pxx=pxx.*Fs;
 
-        Nh=length(pxx);
+    Nh=length(pxx);
+    
+    if(DBplot)
+        figure(1); clf; hold all;
+        plot(fp,20*log10(pxx));
+    end
+    
+    if(strcmp(feat_name,'spectral_relative_power'))
+        pxx_total=sum( pxx(itotal_bandpass) )/N;
+    else
+        pxx_total=1;
+    end
+    
+    spec_pow=NaN(1,size(freq_bands,1));
+
+    for p=1:size(freq_bands,1)
+        if(p==1)
+            istart=ceil(freq_bands(p,1)*f_scale);
+        else
+            istart=ibandpass(end)-1;
+        end
+        ibandpass=istart:floor(freq_bands(p,2)*f_scale);        
+        ibandpass=ibandpass+1;
+        ibandpass(ibandpass<1)=1; ibandpass(ibandpass>Nh)=Nh;    
+        
+        spec_pow(p)=sum( pxx(ibandpass) )/(N*pxx_total);            
         
         if(DBplot)
-            figure(1); clf; hold all;
-            plot(fp,20*log10(pxx));
+            line([fp(ibandpass(1)) fp(ibandpass(1))],ylim,'color','k');        
+            line([fp(ibandpass(end)) fp(ibandpass(end))],ylim,'color','k');
         end
-        
-        if(strcmp(feat_name,'spectral_relative_power'))
-            pxx_total=sum( pxx(itotal_bandpass) )/N;
-        else
-            pxx_total=1;
-        end
-        
-        spec_pow=NaN(1,size(freq_bands,1));
-
-        for p=1:size(freq_bands,1)
-            if(p==1)
-                istart=ceil(freq_bands(p,1)*f_scale);
-            else
-                istart=ibandpass(end)-1;
-            end
-            ibandpass=istart:floor(freq_bands(p,2)*f_scale);        
-            ibandpass=ibandpass+1;
-            ibandpass(ibandpass<1)=1; ibandpass(ibandpass>Nh)=Nh;    
-            
-            spec_pow(p)=sum( pxx(ibandpass) )/(N*pxx_total);            
-            
-            if(DBplot)
-                line([fp(ibandpass(1)) fp(ibandpass(1))],ylim,'color','k');        
-                line([fp(ibandpass(end)) fp(ibandpass(end))],ylim,'color','k');
-            end
-        end
-        featx=spec_pow;
-        
+    end
+    featx=spec_pow;
+    
         
   case 'spectral_flatness'
     %---------------------------------------------------------------------
@@ -224,4 +231,7 @@ end
 
 
 
+
+
+end
 

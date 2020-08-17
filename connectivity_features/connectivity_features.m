@@ -40,7 +40,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2019-01-09 15:58:25 (otoolej)>
+% last update: Time-stamp: <2020-08-17 16:49:56 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx = connectivity_features(x, Fs, feat_name, params_st, ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -76,15 +76,16 @@ if(isempty(freq_bands))
     N_freq_bands = 1;
 end
 
-
-if(N_channels>2  && ~isempty(ch_labels))
+if(~isempty(ch_labels))
+    % find left and right channels:
     [ileft, iright] = channel_hemispheres(ch_labels);
     ipairs = channel_hemisphere_pairs(ch_labels);    
-elseif(N_channels == 2)
-    % if no channel labels then guess:
-    ileft = 1; iright = 2;
-    ipairs = [1 2]';
+else
+    warning('REQUIRED: channel names for coherence function.');
+    featx = NaN;
+    return;
 end
+
 
 
 switch feat_name
