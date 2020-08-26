@@ -7,14 +7,21 @@ in the git logs.
 ### Changed 
 ### Removed
 ### Fixed
+### Added
+
+
+## [0.4.4] - 26-08-2020
+### Changed 
+- Returns Table of feature values (per epoch and per channel) from function
+  `generate_all_features` if input argument `return_feat_epoch=true`
+### Removed
+### Fixed
 - Bug fix for `connectivity_features`; was: if channel labels (cell of strings) are empty
   then would assume (incorrectly) only 2 channels and would use index [1,2] for left,right
   hemisphere; now: if no channel labels throw warning
 ### Added
 - Check in `spectral_features`: is `L_window` longer than signal (and if so throw
   warning)?
-
-
 
 
 ## [0.4.3] - 2020-04-22

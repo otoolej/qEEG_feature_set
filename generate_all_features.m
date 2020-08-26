@@ -15,7 +15,13 @@
 % 
 % Outputs: 
 %     feat_st         - structure containing features
-%     feats_per_epoch - cell of features x channel x epoch x frequency_band
+%     feats_per_epoch - table of features per epoch; in long format, with columns: 
+%                         [time - channel - freq. band - value - feature name]
+%                       start_time_sec: start time of the epoch (seconds)
+%                       channel: name of channel (string)
+%                       freq_band: number of frequency band (string, e.g. FB1)
+%                       feature_value: value of the feature (real number, scalar)
+%                       feature: name of the feature (string)         
 %
 % 
 % Example:
@@ -32,10 +38,10 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2020-04-23 16:24:02 (otoolej)>
+% last update: Time-stamp: <2020-08-17 18:08:33 (otoolej)>
 %-------------------------------------------------------------------------------
-function [feat_st,feats_per_epochs]=generate_all_features(fname,channel_names,feat_set, ...
-                                                  return_feat_epoch)
+function [feat_st, feats_all_epochs_tb] = generate_all_features(fname, channel_names, feat_set, ...
+                                                      return_feat_epoch)
 if(nargin<2 || isempty(channel_names)), channel_names=[]; end
 if(nargin<3 || isempty(feat_set)), feat_set=[]; end
 if(nargin<4 || isempty(return_feat_epoch)), return_feat_epoch = false; end
@@ -102,6 +108,7 @@ if(isempty(feat_set))
 end
 
 N_feats=length(feat_set);
+feats_all_epochs_tb = [];
 
 % A) iterate over features
 for n=1:N_feats
@@ -117,9 +124,9 @@ for n=1:N_feats
     if( any(strcmp({'amplitude','spectral','rEEG','FD'},feat_group)) )
 
         % B) iterate over channels
-        feats_channel=[]; x_epochs=[]; 
+        feats_channel=[]; x_epochs=[]; feats_tbl = [];
         for c=1:N_channels
-            x_epochs=overlap_epochs(eeg_data(c,:)',Fs,EPOCH_LENGTH,EPOCH_OVERLAP);
+            [x_epochs, epoch_start_times] = overlap_epochs(eeg_data(c,:)',Fs,EPOCH_LENGTH,EPOCH_OVERLAP);
             N_epochs=size(x_epochs,1);
             
             % C) iterate over epochs
@@ -147,7 +154,20 @@ for n=1:N_feats
             end
             % if want to return feature estimated over all epochs:
             if(return_feat_epoch)
-        	feats_per_epochs{n}(c,:,:)=feats_epochs;
+        	% feats_per_epochs{n}(c,:,:)=feats_epochs;
+                
+                % create table with features and start time of epoch:
+                fb_names = arrayfun(@(x) ['FB' num2str(x)], 1:size(feats_epochs, 2), 'un', false);
+                tb = array2table([epoch_start_times' feats_epochs], ...
+                                 'VariableNames', ['start_time_sec', fb_names]);
+                % add channel:
+                tb.channel(:) = string(ch_labels{c});
+                
+                % convert from wide to long format for frequency bands:
+                tb = stack(tb, fb_names, 'newDataVariableName', {'feature_value'}, ...
+                           'IndexVariableName', {'freq_band'});
+                
+                feats_tbl = [feats_tbl; tb];
             end
             
             % median over all epochs
@@ -155,6 +175,14 @@ for n=1:N_feats
         end
         % and median over all channels:
         feat_st.(char(feat_set{n}))=nanmedian(feats_channel, 1);
+        
+
+        if(return_feat_epoch)
+            % add feature name and combine:
+            feats_tbl.feature(:) = string(feat_set{n});
+            feats_all_epochs_tb = [feats_all_epochs_tb; feats_tbl];
+        end
+
 
         %---------------------------------------------------------------------
         % CONNECTIVITY FEATURES
@@ -164,7 +192,12 @@ for n=1:N_feats
 
         x_epochs=[]; 
         for c=1:N_channels
-            x_epochs(c,:,:)=overlap_epochs(eeg_data(c,:)',Fs,EPOCH_LENGTH,EPOCH_OVERLAP);
+            if(c == N_channels)
+                [x_epochs(c,:,:), epoch_start_times] = ...
+                    overlap_epochs(eeg_data(c,:)',Fs,EPOCH_LENGTH,EPOCH_OVERLAP);
+            else
+                x_epochs(c,:,:) = overlap_epochs(eeg_data(c,:)',Fs,EPOCH_LENGTH,EPOCH_OVERLAP);
+            end
         end
         N_epochs=size(x_epochs,2); 
         
@@ -185,6 +218,25 @@ for n=1:N_feats
         end
         % median over all epochs
         feat_st.(char(feat_set{n}))=nanmedian(feats_epochs, 1);
+        
+        % if want to return feature estimated over all epochs:
+        if(return_feat_epoch)
+            % create table with features and start time of epoch:
+            fb_names = arrayfun(@(x) ['FB' num2str(x)], 1:size(feats_epochs, 2), 'un', false);
+            tb = array2table([epoch_start_times' feats_epochs], ...
+                             'VariableNames', ['start_time_sec', fb_names]);
+            % add channel:
+            tb.channel(:) = NaN;
+            
+            % convert from wide to long format for frequency bands:
+            tb = stack(tb, fb_names, 'newDataVariableName', {'feature_value'}, ...
+                       'IndexVariableName', {'freq_band'});
+            
+            % add feature name and combine:
+            tb.feature(:) = string(feat_set{n});
+            feats_all_epochs_tb = [feats_all_epochs_tb; tb];
+        end
+        
         
 
         %---------------------------------------------------------------------
@@ -208,7 +260,7 @@ end
 
 
 
-function [x_epochs] = overlap_epochs(x, Fs, L_window, overlap, window_type)
+function [x_epochs, start_times] = overlap_epochs(x, Fs, L_window, overlap, window_type)
 %---------------------------------------------------------------------
 % overlapping epochs in one matrix
 %---------------------------------------------------------------------
@@ -232,11 +284,13 @@ ix = 0:(N - 1);
 
 
 x_epochs = NaN(N_epochs, L_epoch);
+start_times = NaN(1, N_epochs);
 for k = 1:N_epochs
     nf = nw + (k - 1) * L_hop;
     % zero-pad if outside x:
     nf = nf(ismember(nf, ix)) + 1;
     i_nf = 1:length(nf);
+    start_times(k) = (min(nf) - 1) / Fs;
 
     x_epochs(k, i_nf) = x(nf) .* win_epoch(i_nf).';
 end

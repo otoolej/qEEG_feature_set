@@ -22,11 +22,11 @@
 % John M. O' Toole, University College Cork
 % Started: 20-04-2016
 %
-% last update: Time-stamp: <2019-11-06 09:22:54 (otoolej)>
+% last update: Time-stamp: <2020-08-26 17:43:45 (otoolej)>
 %-------------------------------------------------------------------------------
-function ipairs=channel_hemisphere_pairs(channel_labels)
+function ipairs=channel_hemisphere_pairs(channel_labels, DBverbose)
+if(nargin < 2 || isempty(DBverbose)), DBverbose = false; end
 
-DBverbose=0;
 
 N=length(channel_labels);
 [ileft,iright]=channel_hemispheres(channel_labels);

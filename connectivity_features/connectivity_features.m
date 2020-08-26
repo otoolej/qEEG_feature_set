@@ -40,7 +40,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2020-08-17 16:49:56 (otoolej)>
+% last update: Time-stamp: <2020-08-26 18:00:41 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx = connectivity_features(x, Fs, feat_name, params_st, ch_labels)
 if(nargin<2), error('need 2 input arguments'); end
@@ -50,12 +50,12 @@ if(nargin<5 || isempty(ch_labels)), ch_labels = []; end
 
 
 DBplot = 0;
+featx = NaN;
 
 
 [N_channels, N] = size(x);
 if(N_channels<2)
-    featx = NaN;
-    warning('requires at least 2 channels'); 
+    warning('REQUIRED: at least 2 channels for connectivity functions'); 
     return;
 end
 
@@ -81,10 +81,14 @@ if(~isempty(ch_labels))
     [ileft, iright] = channel_hemispheres(ch_labels);
     ipairs = channel_hemisphere_pairs(ch_labels);    
 else
-    warning('REQUIRED: channel names for coherence function.');
-    featx = NaN;
+    warning('REQUIRED: channel names for connectivity functions.');
     return;
 end
+if(isempty(ipairs))
+    warning('no channel pairs (left / right) for connectivity functions.');    
+    return;
+end
+
 
 
 
