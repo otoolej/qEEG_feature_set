@@ -4,12 +4,13 @@
 % Syntax: featx = connectivity_features(x, Fs, feat_name, params_st)
 %
 % Inputs: 
-%     x          - epoch of EEG data (size 1 x N)
+%     x          - epoch of EEG data (size N_channels x N)
 %     Fs         - sampling frequency (in Hz)
 %     feat_name  - feature type, defaults to 'connectivity_BSI';
 %                  see full list of 'connectivity_' features in all_features_list.m
 %     params_st  - parameters (as structure); 
 %                  see neural_parameters.m for examples
+%     ch_labels  - cell function with channel names (1 x N_channels)
 %
 % Outputs: 
 %     featx  - feature at each frequency band 
@@ -40,7 +41,7 @@
 % John M. O' Toole, University College Cork
 % Started: 13-04-2016
 %
-% last update: Time-stamp: <2020-08-26 18:00:41 (otoolej)>
+% last update: Time-stamp: <2020-11-25 19:14:45 (otoolej)>
 %-------------------------------------------------------------------------------
 function featx = connectivity_features(x, Fs, feat_name, params_st, ch_labels)
 if(nargin<2), error('need 2 input arguments'); end

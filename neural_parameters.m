@@ -56,7 +56,6 @@ feat_params_st.rEEG.FILTER_REPLACE_ARTEFACTS = FILTER_REPLACE_ARTEFACTS;
 feat_params_st.connectivity.FILTER_REPLACE_ARTEFACTS = FILTER_REPLACE_ARTEFACTS;
 feat_params_st.FD.FILTER_REPLACE_ARTEFACTS = FILTER_REPLACE_ARTEFACTS;
 
-
 %---------------------------------------------------------------------
 %% FEATURES
 %---------------------------------------------------------------------

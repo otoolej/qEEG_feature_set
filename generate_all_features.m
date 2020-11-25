@@ -1,7 +1,7 @@
 %-------------------------------------------------------------------------------
 % generate_all_features: generate all features for EEG recording (in .mat)
 %
-% Syntax: feat_st=generate_all_features(fname,channel_names,feat_set)
+% Syntax: feat_st=generate_all_features(fname,channel_names,feat_set,return_feat_epoch)
 %
 % Inputs: 
 %     fname             - either EEG filename or data structure with EEG 
@@ -38,7 +38,7 @@
 % John M. O' Toole, University College Cork
 % Started: 07-04-2016
 %
-% last update: Time-stamp: <2020-08-17 18:08:33 (otoolej)>
+% last update: Time-stamp: <2020-09-16 09:28:23 (otoolej)>
 %-------------------------------------------------------------------------------
 function [feat_st, feats_all_epochs_tb] = generate_all_features(fname, channel_names, feat_set, ...
                                                       return_feat_epoch)
